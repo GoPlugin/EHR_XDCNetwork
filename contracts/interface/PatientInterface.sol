@@ -24,6 +24,7 @@ interface PatientInterface is GenericInterface {
         address patient;
         string patientDetails; //Should be metadata hash about the patients
         Sex sex;
+        string vitals;
         uint256 registeredOn;
         address registeredBy;
         string masterHash;
@@ -41,6 +42,8 @@ interface PatientInterface is GenericInterface {
         uint256 recordAddedOn;
         address recordAddedBy;
         Role roleType;
+        RecordType recordType;
+        DiagRepeat diagRepeat;
     }
 
     struct DocumentLogs {
@@ -51,4 +54,21 @@ interface PatientInterface is GenericInterface {
         uint256 otp;
         bool processed;
     }
+
+    enum RecordType{
+        DRUGPRESCRIPTION,
+        DIAGPRESCRIPTION,
+        REPORT,
+        VITALS,
+        INSURANCE
+    }
+
+    enum DiagRepeat {
+        NONE,
+        DAILY,
+        WEEK,
+        MONTHLY
+        
+    }
 }
+

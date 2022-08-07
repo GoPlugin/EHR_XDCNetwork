@@ -1,9 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "./interface/PatientInterface.sol";
-import "./interface/DoctorInterface.sol";
-import "../CustomTokens/contracts/utils/Counters.sol";
+// import "./interface/PatientInterface.sol";
+// import "./interface/DoctorInterface.sol";
+// import "../CustomTokens/contracts/utils/Counters.sol";
+// import "@goplugin/contracts/src/v0.8/PluginClient.sol";
+import "PatientInterface.sol";
+import "DoctorInterface.sol";
+import "Counters.sol";
 import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 
 contract EHR is PluginClient, PatientInterface, DoctorInterface {
@@ -15,14 +19,16 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     using Plugin for Plugin.Request;
 
-    uint256 private constant ORACLE_PAYMENT = 0.1 * 10**18;
+    uint256 private constant ORACLE_PAYMENT = 0.01 * 10**18;
 
     // address
     address public owner;
     mapping(uint256 => Record) public records;
+    mapping(address => Record) public recordsDetails;
     mapping(uint256 => Patient) public patients;
     mapping(address => Patient) public patientDetails;
     mapping(address => bool) public patientRegistered;
+    mapping(address => mapping (address => bool)) public patientToRole;
     mapping(uint256 => Doctor) public doctors;
     mapping(address => bool) public doctorsRegistered;
     mapping(uint256 => DocumentLogs) public documentLogs;
@@ -39,6 +45,23 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     modifier only_owner() {
         require(owner == msg.sender);
+        _;
+    }
+
+    modifier checkPatient(address _patientAddr) {
+        require(patientRegistered[_patientAddr] == true, 
+                "Patient Not registered");
+        _;
+    }
+
+     modifier checkDoctor(address _doctorAddr) {
+        require(doctorsRegistered[_doctorAddr] == true, 
+                "Doctor Not registered");
+        _;
+    }
+
+    modifier accessVerify(address _patientAddr, address _roleAddr) {
+        require(patientToRole[_patientAddr][_roleAddr] == true, "Acces Denied");
         _;
     }
 
@@ -66,6 +89,8 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint256 performedOn
     );
 
+    
+
     //Initialize event requestCreated
     event requestCreated(
         address indexed requester,
@@ -79,6 +104,33 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint256 indexed otp
     );
 
+    //For Ambulance / ECU
+    event emergencyView(
+        string patientDetails,
+        Sex sex,
+        string nominee,
+        string contact,
+        string vitals
+    );
+
+    // Pharmacist view
+    event PharmacistEvent(
+        address patientAddr,
+        // string prescription,
+        // string insurance
+        RecordType prescription,
+        RecordType insurance
+    );
+
+    // Insurance view
+    event InsuranceEvent(
+        string patientDetails,
+        string vitals,
+        string nominee,
+        string contact
+    );
+    
+
     // Register Patient
     function registerPatients(
         address _patientAddress,
@@ -87,6 +139,10 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory _careGiverName,
         Status _status,
         Sex _gender,
+        string memory _vitals,
+        // string memory _treatments,
+        // string memory _habits,
+        // string memory _surgeries,
         string memory _masterhash
     ) public returns (uint256) {
         uint256 _patientid = _patientIds.current();
@@ -102,6 +158,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             _patientAddress,
             _metaData,
             Sex(_gender),
+            _vitals,
             block.timestamp,
             msg.sender,
             _masterhash,
@@ -167,13 +224,14 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     function deRegisterDoctor(address _doctorAddress)
         public
         only_owner
+        checkDoctor(_doctorAddress)
         returns (bool)
     {
         // if doctor is authorized
-        require(
-            doctorsRegistered[_doctorAddress] == true,
-            "Cannot remove the Doctor who is not active."
-        );
+        // require(
+        //     doctorsRegistered[_doctorAddress] == true,
+        //     "Cannot remove the Doctor who is not active."
+        // );
         doctorsRegistered[_doctorAddress] = false;
         emit DoctorEvents(
             0,
@@ -190,7 +248,9 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         address _patientAddr,
         string memory _masterHash,
         string memory _filehash,
-        Role _roleType
+        Role _roleType,
+        RecordType _recordType,
+        DiagRepeat _diagRepeat
     ) public returns (bool) {
         if (Role(_roleType) == Role.DOCTOR) {
             require(
@@ -198,7 +258,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
                 "Doctor not registererd yet"
             );
         }
-        if (Role(_roleType) == Role.PATIENT) {
+        else {
             require(
                 patientRegistered[msg.sender] == true,
                 "Patient not registererd yet"
@@ -209,7 +269,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
         Patient memory p = patientDetails[_patientAddr];
         p.masterHash = _masterHash;
-
+        
         records[_recordid] = Record(
             _recordid,
             _patientAddr,
@@ -217,8 +277,13 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             RecordStatus(0),
             block.timestamp,
             msg.sender,
-            Role(_roleType)
+            Role(_roleType),
+            RecordType(_recordType),
+            DiagRepeat(_diagRepeat)
         );
+
+        recordsDetails[_patientAddr] = records[_recordid];
+
         emit RecordEvents(
             _recordid,
             "Record has been inserted",
@@ -228,7 +293,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         );
         return true;
     }
-
+   
     //requestToView
     function requestToView(
         address _oracle,
@@ -265,6 +330,102 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         emit requestCreated(msg.sender, stringToBytes32(_jobId), requestId);
     }
 
+    //GrantAccess
+    function grantAccess(address _roleAddr) public checkPatient(msg.sender) returns(bool){
+        require(patientToRole[msg.sender][_roleAddr] == false,
+                "Access has been provided!");
+                patientToRole[msg.sender][_roleAddr] = true;
+                Patient memory p = patientDetails[msg.sender];
+                emit PatientEvents(
+                    p.patientId,
+                    "Access Grant Registered",
+                    msg.sender,
+                    msg.sender,
+                    block.timestamp
+                );
+                return true;
+    }
+    
+    //RevokeAccess
+    function revokeAccess(address _roleAddr) public checkPatient(msg.sender) returns(bool){
+                require(patientToRole[msg.sender][_roleAddr] == true,
+                "Access has been provided!");
+                patientToRole[msg.sender][_roleAddr] = false;
+                Patient memory p = patientDetails[msg.sender];
+                emit PatientEvents(
+                    p.patientId,
+                    "Access Revoke Registered",
+                    msg.sender,
+                    msg.sender,
+                    block.timestamp
+                );
+                return true;
+    }
+
+    //Ambulance/ECU VITALS data view
+    function ambEcuView(
+        address _patientAddr
+    ) public only_owner checkPatient(_patientAddr){
+        Patient memory p = patientDetails[_patientAddr];
+        emit emergencyView(p.patientDetails, p.sex, p.nominee, p.contact, p.vitals);
+    }
+
+     //Pharmacist window to view patient prescription
+     function pharmacistView(
+        address _chemistAddr,
+        address _patientAddr
+        ) public accessVerify(_patientAddr,_chemistAddr){
+            emit PharmacistEvent(_patientAddr, RecordType(0),RecordType(4));
+    }
+
+    //Insurance
+    function InsuranceVerification(
+        address _insuranceAddr,
+        address _patientAddr
+    ) public {
+        require(patientToRole[_patientAddr][_insuranceAddr] == true, "Access denied for Insurance");
+        Patient memory p = patientDetails[_patientAddr];
+        emit InsuranceEvent(p.patientDetails, p.vitals, p.nominee, p.contact);
+
+    }
+
+    //Diagnostics check
+    // function diagCheck(
+    //     address _oracle,
+    //     string memory _jobId
+    // ) public checkPatient(msg.sender) returns (bytes32 requestId){
+    //     uint256 _viewId = _viewIds.current();
+    //     Plugin.Request memory request = buildPluginRequest(
+    //         stringToBytes32(_jobId),
+    //         address(this),
+    //         this.fulfillPermission.selector
+    //     );
+    //     // [] memory patientRecords = recordsDetails[msg.sender];
+    //     for(uint256 i = 0;i <= recordsDetails[msg.sender].length;i++){
+    //         if(recordsDetails[msg.sender][i].diagRepeat == DiagRepeat.NONE){
+    //             request.addUint("until", block.timestamp + 1);
+    //             documentLogs[_viewId] = DocumentLogs(
+    //                 _viewId,
+    //                 msg.sender,
+    //                 block.timestamp,
+    //                 msg.sender,
+    //                 1,
+    //                 false
+    //             );
+    //             requestId = sendPluginRequestTo(_oracle, request, ORACLE_PAYMENT);
+    //             documentLogRequestIds[requestId] = documentLogs[_viewId];
+    //             emit requestCreated(msg.sender, stringToBytes32(_jobId), requestId);
+                
+    //             //return true;
+    //         }
+    //     }
+    //     //return false;
+    // }
+
+    
+
+   
+    
     //callBack function
     function fulfillPermission(bytes32 _requestId, uint256 _otp)
         public
