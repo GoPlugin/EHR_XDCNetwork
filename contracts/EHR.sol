@@ -5,9 +5,9 @@ pragma solidity ^0.8.4;
 // import "./interface/DoctorInterface.sol";
 // import "../CustomTokens/contracts/utils/Counters.sol";
 // import "@goplugin/contracts/src/v0.8/PluginClient.sol";
-import "PatientInterface.sol";
-import "DoctorInterface.sol";
-import "Counters.sol";
+import "./interface/PatientInterface.sol";
+import "./interface/DoctorInterface.sol";
+import "../CustomTokens/contracts/utils/Counters.sol";
 import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 
 contract EHR is PluginClient, PatientInterface, DoctorInterface {

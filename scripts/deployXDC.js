@@ -8,11 +8,11 @@ async function deploy(name, ...params) {
 
 async function main() {
 
-  const xrc20Gateway = await deploy('XRC20Gateway', "0xb3db178db835b4dfcb4149b2161644058393267d");
-  console.log("xrc20Gateway deployed to:", xrc20Gateway.address);
+  const ehr = await deploy('EHR', "0xb3db178db835b4dfcb4149b2161644058393267d");
+  console.log("EHR deployed to:", ehr.address);
 
   writeFileSync('deployxdc.json', JSON.stringify({
-    XRC20Gateway: xrc20Gateway.address
+    EHR: ehr.address
   }, null, 2));
 
 }

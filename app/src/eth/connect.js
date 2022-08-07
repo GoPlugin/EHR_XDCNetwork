@@ -9,7 +9,7 @@ export async function connectWallet() {
     walletconnect: {
       package: WalletConnectProvider,
       options: {
-        rpcUrl: "https://rinkeby.infura.io/v3/8d4b9c6cf9a942bd9c0468942a96fce0",
+        rpcUrl: "https://rpc.apothem.network",
       }
     },
     torus: {

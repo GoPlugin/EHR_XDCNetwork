@@ -5,8 +5,7 @@ import { ethers } from 'ethers';
 import { log } from '../service/service';
 
 import './App.css';
-import ERC20Payment from './ERC20Payment/ERC20Payment';
-import XRC20Gateway from './XRC20Gateway/XRC20Gateway';
+import EHR from './EHR/EHR';
 
 import { useState } from 'react';
 
@@ -23,17 +22,10 @@ function App() {
     event.preventDefault();
     const instance = await connectWallet();
     const provider = new ethers.providers.Web3Provider(instance);
-    const erc20gateway = createInstance(provider, "ERC20Gateway");
-    const xrc20gateway = createInstance(provider, "XRC20Gateway");
-    const usdt = createInstance(provider, "USDT");
-    const usdc = createInstance(provider, "USDC");
-    const dai = createInstance(provider, "DAI");
-    const pli = createInstance(provider, "PLI");
-
-
+    const ehr = createInstance(provider, "EHR");
     const signer = provider.getSigner();
     const account = signer.getAddress();
-    setethereumContext({ provider, erc20gateway, usdt, usdc, dai, pli, account, xrc20gateway })
+    setethereumContext({ provider, ehr, account })
     log("Connect", "Get Address", await signer.getAddress());
 
     setconnecting(true);
@@ -41,7 +33,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Decentralized Application</h1>
+        <h1>EHR Decentralized Application</h1>
         <p>Powered by PLI in XDC Network</p>
         <form onSubmit={connect}>
           <button type="submit" disabled={connecting}>{connecting ? 'Connecting...' : 'Connect'}</button>
@@ -49,8 +41,7 @@ function App() {
       </header>
       <section className="App-content">
         <EthereumContext.Provider value={ethereumContext}>
-          <ERC20Payment />
-          <XRC20Gateway />
+          <EHR />
         </EthereumContext.Provider>
       </section>
       <ToastContainer hideProgressBar={true} />
