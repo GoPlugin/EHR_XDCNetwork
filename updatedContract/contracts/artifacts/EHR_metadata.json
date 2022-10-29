@@ -1,0 +1,822 @@
+{
+	"compiler": {
+		"version": "0.8.4+commit.c7e474f2"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_pli",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					}
+				],
+				"name": "PluginCancelled",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					}
+				],
+				"name": "PluginFulfilled",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					}
+				],
+				"name": "PluginRequested",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "comment",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "docKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "registeredOn",
+						"type": "uint256"
+					}
+				],
+				"name": "RecordEvents",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "patientKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "evenType",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "registeredOn",
+						"type": "uint256"
+					}
+				],
+				"name": "patregistration",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_docKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum GenericInterface.access",
+						"name": "ac",
+						"type": "uint8"
+					}
+				],
+				"name": "accessControl",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "accessForDoctor",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "careGiverData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "doctorAccess",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "doctorName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorPass",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorCred",
+						"type": "string"
+					},
+					{
+						"internalType": "enum DoctorInterface.DoctorType",
+						"name": "docType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum GenericInterface.Sex",
+						"name": "docSex",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patientAccess",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "patientName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientPass",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patientLocData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "city",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "state",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "country",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "landmark",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pincode",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patienthealthData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "allergies",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "lifesaver",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "height",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "patientrecordsData",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "docKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "recordHash",
+						"type": "uint256"
+					}
+				],
+				"name": "recordByDoctor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "recordHash",
+						"type": "uint256"
+					}
+				],
+				"name": "recordByPatient",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "position",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					}
+				],
+				"name": "registerCareGiver",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "doctorName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorPass",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorCred",
+						"type": "string"
+					},
+					{
+						"internalType": "enum DoctorInterface.DoctorType",
+						"name": "_doctorType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum GenericInterface.Sex",
+						"name": "_gender",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum GenericInterface.stateChange",
+						"name": "reup",
+						"type": "uint8"
+					}
+				],
+				"name": "registerDoctor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "allergies",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "lifesaver",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "height",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					}
+				],
+				"name": "registerPatientHealth",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "city",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "state",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "country",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "landmark",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pincode",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					}
+				],
+				"name": "registerPatientLoc",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "patientName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientPass",
+						"type": "string"
+					},
+					{
+						"internalType": "enum GenericInterface.stateChange",
+						"name": "reup",
+						"type": "uint8"
+					}
+				],
+				"name": "registerPatients",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "position",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					}
+				],
+				"name": "updateCareGiver",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/EHR.sol": "EHR"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@goplugin/contracts/src/v0.8/Plugin.sol": {
+			"keccak256": "0x3d4f45b99494d19284524a09102e09a1a3fc74d9b0fa27d2861f0957d79e30e1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://76e85c584eb74eb8669fb3773da1c938c584ecec9a6ac29e856c6b2138337978",
+				"dweb:/ipfs/Qmeag6GbPJApYgKmzRokqHyJez7Eaz5AZMhytDjkiDo9Ln"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/PluginClient.sol": {
+			"keccak256": "0x54572ca17cd364505bf62036e4022c4f5a0f224869459ca0e2e85f94d734e53b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7f46d5ac8893c45d9a501002a61bffa773521cf8d50ff21cc5557e9b02e25ce3",
+				"dweb:/ipfs/QmSj2XAvNFS927Ustu4ZA9xec5YNxebjaK9gqYjAad3fQW"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/ENSInterface.sol": {
+			"keccak256": "0xd8545d2e73f7aa517543d97e1763d95c11ddd52a5050cf1933047c9f22f10b5a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://de663408f7c1937e46aef8d86e180a2528f31cdcbc43e1682297c20be03af461",
+				"dweb:/ipfs/QmVpFw2fJkaegf6hGRYtjx932KJCs6bAuKvCRoXrhV7GMF"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/OperatorInterface.sol": {
+			"keccak256": "0xcb216db11216856f68499495aea5c5e3d3c6998e68ed34eb65576dd7517e8eae",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bcb66491241d9abbc2074a5bbb86518a64b360b848a632c9d8bb9fe6cfe3b75c",
+				"dweb:/ipfs/QmPWxkMewrA49GcJ5cifAhb95XsNWjRNa9i2jrBM5nvgVX"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/OracleInterface.sol": {
+			"keccak256": "0x55fb2c156150379d285ab89081ff5add6f37343d7992bd2ec1485a2652af94d7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cd1fc4c0fb89f7de9ec68fdc582950c63d581f3822ef71d9a8fd240a73b37778",
+				"dweb:/ipfs/QmdvboNgXzaQXMaceVQPGwpZHMC5fe9LU9GkippzA8quPJ"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/PliTokenInterface.sol": {
+			"keccak256": "0x82c31fff77f022d56bde5ae1b251380644c3496221421245300824b25bc11f6e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ca1f74f75b6986778c3a7c499ba9d430d267cb797b12b93d47a4b4a5f583799",
+				"dweb:/ipfs/QmU9hUjmtAJaJTz1fekwAYVWwWmYufRYXzEW9M5hgE49dR"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/PluginRequestInterface.sol": {
+			"keccak256": "0x30e0b2e375a8e3ae9f4f1ca448a30a5670d78685276302aa902b4331947a46d2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bd4a540852961f706b270135c7bf16a2269deab62d4288d9bc762a4fbcf179cc",
+				"dweb:/ipfs/QmQfDAbiU1WNCHxpJdrm89fFnA7RwCMJw81Pq4gU5qQjrx"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/interfaces/PointerInterface.sol": {
+			"keccak256": "0xc3d897e7c93b02e53f21b40accd4a0bd5c38f9780a4f74a7109b70fbfde03b40",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://11166ec1ac48aaf14f5a7053283371341e0418eaced385b7ed7c9140d9f1f1df",
+				"dweb:/ipfs/QmV4bkHEEpeqC6pr3nmmQQURkVKMroucA31YoGcysnByt7"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/vendor/BufferPlugin.sol": {
+			"keccak256": "0x16cb401b48de656645a2a98614d0a9ca1e2bd3fc57e79b964f8c15c06b2d086b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7f6b3a0e1e427421b90f88d825737bc5feab5724ff0d1ff6f28e275255c0b2d7",
+				"dweb:/ipfs/QmViHBvvXStg3qdsVqSAPNKAUgWxBLhuT5EtoDnc2WX5c1"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/vendor/CBORPlugin.sol": {
+			"keccak256": "0xb64a0acf3a0be6f51bc0f8a84c532832ddef56402e926fbf371cd91589eaecf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1b6959894153d714583ca2212d25afd5a1ca5b348aa07cadf91e88b7de322668",
+				"dweb:/ipfs/QmUb4R5nT2wnvYNWaph9mP4PGM1uYD8YoW1dwYNck5aZSh"
+			]
+		},
+		"@goplugin/contracts/src/v0.8/vendor/ENSResolver.sol": {
+			"keccak256": "0xeed48a6a522c400f024f8725ad931833205cb63cc87285b46c5c0e88ca090352",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c4065aed34d3fae897ac7eb7c5e3af1ba9f458fc31c9f165acae8fa448125ec5",
+				"dweb:/ipfs/Qmejzy7Kdw4mHiv5QqyvA8nUU5SeqH6n6dQoe1VEWZUnsi"
+			]
+		},
+		"contracts/EHR.sol": {
+			"keccak256": "0x1b7e8ca5c9d7870f997c75bbd7e5e66737b39635b8614bdb84783ed1c81fd511",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d738ba8cbc73dcefae6a4a7e06c3b9a1892fca78375d6a2763bbcc2b9b439bb3",
+				"dweb:/ipfs/Qmb48MR9kLkDG9D99j6oRED7ThwmiWRHEkkpEGAj8uK24C"
+			]
+		},
+		"contracts/interface/DoctorInterface.sol": {
+			"keccak256": "0x90200392f36df8001556217b4aff56f5ffaebd2b8d2279899d6eda4b29777f79",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d05fcb18ad49cbebe2d49fb4312dfab8ffb3a6a8dfe61782fa0cc40c9c942ec",
+				"dweb:/ipfs/QmYzkohPkBtRXiWvkwPmbK5GQjHx3QrnBqLdgywxZ8FM5V"
+			]
+		},
+		"contracts/interface/GenericInterface.sol": {
+			"keccak256": "0x66a9b1759cc25a03664646aced7dbea13e226badfea8c964eec786cfbb367986",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://934f2702938359ebc655a7a23da2b35193e28e3c7bf67e8538629e33a62e74e0",
+				"dweb:/ipfs/QmRK2CkXLfSk6NmBhaebUmw4TP4CZAPatyUgHHqXXji3af"
+			]
+		},
+		"contracts/interface/PatientInterface.sol": {
+			"keccak256": "0x7c15c2e95e167e2bcf0e873771d40a89faba4f35c8ffaa285440cd4675b49ebb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fde13a95a4e453206bd58ad6f84d16ccc4eae9abc8ccc99f2df9a4e77f5b19d0",
+				"dweb:/ipfs/QmUUVPpkeWk98oM5KhnwrLw4888DmK7qW3rPWMEngkfetW"
+			]
+		}
+	},
+	"version": 1
+}

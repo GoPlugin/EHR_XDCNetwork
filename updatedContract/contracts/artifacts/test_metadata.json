@@ -1,0 +1,647 @@
+{
+	"compiler": {
+		"version": "0.8.4+commit.c7e474f2"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "comment",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "docKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "registeredOn",
+						"type": "uint256"
+					}
+				],
+				"name": "RecordEvents",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "patientKey",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "evenType",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "registeredOn",
+						"type": "uint256"
+					}
+				],
+				"name": "patregistration",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_docKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum test.access",
+						"name": "ac",
+						"type": "uint8"
+					}
+				],
+				"name": "accessControl",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "accessForDoctor",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "careGiverData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "doctorAccess",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "doctorName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorPass",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorCred",
+						"type": "string"
+					},
+					{
+						"internalType": "enum test.DoctorType",
+						"name": "docType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum test.Sex",
+						"name": "docSex",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patientAccess",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "patientName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientPass",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExist",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patientLocData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "city",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "state",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "country",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "landmark",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pincode",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "patienthealthData",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "allergies",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "lifesaver",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "height",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"name": "patientrecordsData",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "docKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "recordHash",
+						"type": "uint256"
+					}
+				],
+				"name": "recordByDoctor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "recordHash",
+						"type": "uint256"
+					}
+				],
+				"name": "recordByPatient",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "position",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					}
+				],
+				"name": "registerCareGiver",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "doctorName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorPass",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "doctorCred",
+						"type": "string"
+					},
+					{
+						"internalType": "enum test.DoctorType",
+						"name": "_doctorType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum test.Sex",
+						"name": "_gender",
+						"type": "uint8"
+					},
+					{
+						"internalType": "enum test.stateChange",
+						"name": "reup",
+						"type": "uint8"
+					}
+				],
+				"name": "registerDoctor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "allergies",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "lifesaver",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "height",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "weight",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					}
+				],
+				"name": "registerPatientHealth",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "city",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "state",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "country",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "landmark",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pincode",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					}
+				],
+				"name": "registerPatientLoc",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "patientName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientEmail",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "patientPass",
+						"type": "string"
+					},
+					{
+						"internalType": "enum test.stateChange",
+						"name": "reup",
+						"type": "uint8"
+					}
+				],
+				"name": "registerPatients",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "patKey",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "position",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "careName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careMobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "careRelation",
+						"type": "string"
+					}
+				],
+				"name": "updateCareGiver",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"test.sol": "test"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"test.sol": {
+			"keccak256": "0x439f0d5414c2a79a32db7272aa95702c3a461343b220bd263b344f708f96ca65",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7dd67caf706a4404ac670b742977fa8758857ee4f9193fa1780ab4855ef80b12",
+				"dweb:/ipfs/QmTiqtxGbVADt3xBi8iMr3DnPhsBNhYwu4M6xHZLvn1oV7"
+			]
+		}
+	},
+	"version": 1
+}
