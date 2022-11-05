@@ -19,12 +19,12 @@ app.use(bodyParser.json())
 
 app.post('/api/registerPatients', async (req, res) => {
 
-  console.log("request value is", req.body, req.body[1], req.body[3])
-  const patientName = req.body[1];
-  const patientEmail = req.body[2];
-  const patientMobile = req.body[3];
-  const patientPass = req.body[4];
-  const stateChange = req.body[5];
+  console.log("request value is", req);
+  const patientName = req.body.patientName;
+  const patientEmail = req.body.patientEmail;
+  const patientMobile = req.body.patientMobile;
+  const patientPass = req.body.patientPass;
+  const stateChange = req.body.stateChange;
 
   //const buyer = req.body[1];
   //const amountPaid = req.body[3];
@@ -40,18 +40,22 @@ app.post('/api/registerPatients', async (req, res) => {
   console.log("patientMobile, ", patientMobile);
   console.log("patientPass, ", patientPass);
   console.log("stateChange, ", stateChange);
-
+  
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
-  console.log("Requestor Contract is, ", requestContract);
+  // console.log("requestContract",requestContract)
+  
   const account = xdc3.eth.accounts.privateKeyToAccount(deployed_private_key);
-  console.log("Account Address is, ", account, account.address);
+  // console.log("Account Address is, ", account, account.address);
   const nonce = await xdc3.eth.getTransactionCount(account.address);
   const gasPrice = await xdc3.eth.getGasPrice();
+  // console.log("ACCOUNT",account)
+  // console.log("nonce",nonce)
+  console.log("gasPrice before",gasPrice)
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientMobile, patientPass, stateChange).encodeABI(),
+    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, stateChange).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -59,24 +63,38 @@ app.post('/api/registerPatients', async (req, res) => {
 
   const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
-
+  console.log("gasPrice", gasPrice);
   const signed = await xdc3.eth.accounts.signTransaction(
     tx,
     deployed_private_key
-  );
+  )
 
+  console.log("gasPrice", gasPrice);
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+
+  // const transaction = xdc3.eth.abi.decodeLog(
+                        
+  //                     )
+  const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    console.log("events",events[0].returnValues.patientKey);
+    // console.log("events",events[0].returnValues);
+  // console.log("log-0", txt.logs[0]);
+  // var request = txt.logs[0];
+  // console.log("request", request);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset);
+  // res.send(resultset);
+  // console.log("gaslimit", gasLimit);
 })
 
 app.post('/api/registerDoctor', async (req, res) => {
 
-  console.log("request value is", req.body, req.body[1], req.body[3])
+  //console.log("request value is", req.body, req.body[1], req.body[3])
   const doctorName = req.body[1];
   const doctorEmail = req.body[2];
   const doctorMobile = req.body[3];
@@ -124,6 +142,7 @@ app.post('/api/registerDoctor', async (req, res) => {
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
     .once("receipt", console.log);
+    console.log("stateChange, ", stateChange);
   var request = h.decodeRunRequest(txt.logs[3]);
   const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   console.log("resultSet  ,", resultset)

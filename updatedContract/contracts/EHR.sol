@@ -21,8 +21,8 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         bool isExist; 
         }
 
-    event patregistration(
-        uint patientKey,
+    event ehrEvent(
+        uint retValue,
         string evenType,
         uint registeredOn
     );
@@ -57,6 +57,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     mapping(uint => mapping(string => uint)) public patientrecordsData;
     mapping(uint => mapping(uint => careGiver)) public careGiverData;
     mapping(uint => mapping(uint => bool)) public accessForDoctor;
+    mapping(uint => doctorCredentials) public doctorCredentialsStore;
     string[] RecordType = ['MRI','BLOODTEST','COVIDTEST','COVIDCERTIFICATE','CHECKUP'];
     uint[] index;
     
@@ -68,7 +69,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory patientMobile,
         string memory patientPass,
         stateChange reup
-    ) public {
+    ) public returns(uint){
         uint patientKey = uint(keccak256(abi.encodePacked(patientMobile,patientEmail)));
         string memory comments;
         if(reup == stateChange.REGISTER){
@@ -86,11 +87,13 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             comments = "Patient Record Updated";
         }
         
-        emit patregistration(
+        emit ehrEvent(
             patientKey,
             comments,
             block.timestamp);
+            //return patientKey;
     }
+
 
     // registerDoctor register/update
     function registerDoctor(
@@ -98,9 +101,6 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory doctorEmail,
         string memory doctorMobile,
         string memory doctorPass,
-        string memory doctorCred,
-        DoctorType _doctorType,
-        Sex _gender,
         stateChange reup
     ) public {
         uint docKey = uint(keccak256(abi.encodePacked(doctorMobile,doctorEmail)));
@@ -108,7 +108,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         if(reup == stateChange.REGISTER){
             require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) != keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
             require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) != keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
-            doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,doctorCred,DoctorType(_doctorType),Sex(_gender),true);
+            doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,true);
             comments = "Doctor Registration Done";
         }
         if(reup == stateChange.UPDATE){
@@ -119,8 +119,34 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             doctorAccess[docKey].doctorMobile = doctorMobile;
             comments = "Doctor Record Updated";
         }
-        emit patregistration(
+        emit ehrEvent(
             docKey,
+            comments,
+            block.timestamp);
+    }
+
+    // doctorCreds register/update
+    function doctorCreds(
+        uint doctorKey,
+        string memory doctorCred,
+        DoctorType doctorType,
+        Sex gender,
+        stateChange reup
+    ) public {
+        require(doctorAccess[doctorKey].isExist == true, "EHR-DC-01: Doctor isn't registered");
+        string memory comments;
+        if(reup == stateChange.REGISTER){
+            doctorCredentialsStore[doctorKey] = doctorCredentials(doctorCred,DoctorType(doctorType),Sex(gender),true);
+            comments = "Doctor Credentials registered";
+        }
+        if(reup == stateChange.UPDATE){
+            doctorCredentialsStore[doctorKey].doctorCred = doctorCred;
+            doctorCredentialsStore[doctorKey].docType = DoctorType(doctorType);
+            doctorCredentialsStore[doctorKey].docSex = gender;
+            comments = "Doctor Credentials updated";
+        }
+        emit ehrEvent(
+            doctorKey,
             comments,
             block.timestamp);
     }
@@ -135,7 +161,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint patKey
     ) public checkPatient(patKey){
         patientLocData[patKey] = patientGeo(city,state,country,landmark,pincode);
-        emit patregistration(
+        emit ehrEvent(
             patKey,
             "Patient Location Data updated",
             block.timestamp);
@@ -149,7 +175,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint patKey
     ) public checkPatient(patKey){
         patienthealthData[patKey] = patienthealth(allergies,lifesaver,height,weight);
-        emit patregistration(
+        emit ehrEvent(
             patKey,
             "Patient Health Data updated",
             block.timestamp);   
@@ -167,7 +193,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             require(careGiverData[patKey][position].isExist == false, "EHR-RCG-01: Already registered");
             careGiverData[patKey][position] = careGiver(careName,careMobile,careRelation,true);
             
-        emit patregistration(
+        emit ehrEvent(
             patKey,
             "Caregiver Data registered",
             block.timestamp);
@@ -183,7 +209,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     ) public checkPatient(patKey){
         require(careGiverData[patKey][position].isExist == true, "EHR-RCG-02: Not registered");
         careGiverData[patKey][position] = careGiver(careName,careMobile,careRelation,true);
-        emit patregistration(
+        emit ehrEvent(
             patKey,
             "Caregiver Data modified",
             block.timestamp);

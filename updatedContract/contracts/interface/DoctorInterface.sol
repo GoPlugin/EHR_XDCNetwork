@@ -13,13 +13,17 @@ interface DoctorInterface is GenericInterface {
     }
 
     struct doctorEnroll {
-    string doctorName;
-    string doctorEmail;
-    string doctorMobile;
-    string doctorPass; 
-    string doctorCred;
-    DoctorType docType;
-    Sex docSex;
-    bool isExist; 
+        string doctorName;
+        string doctorEmail;
+        string doctorMobile;
+        string doctorPass; 
+        bool isExist; 
+    }
+
+    struct doctorCredentials {
+        string doctorCred;
+        DoctorType docType;
+        Sex docSex;
+        bool isExist;
     }
 }
