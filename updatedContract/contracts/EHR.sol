@@ -91,7 +91,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             patientKey,
             comments,
             block.timestamp);
-            //return patientKey;
+            return patientKey;
     }
 
 
@@ -126,30 +126,30 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     }
 
     // doctorCreds register/update
-    function doctorCreds(
-        uint doctorKey,
-        string memory doctorCred,
-        DoctorType doctorType,
-        Sex gender,
-        stateChange reup
-    ) public {
-        require(doctorAccess[doctorKey].isExist == true, "EHR-DC-01: Doctor isn't registered");
-        string memory comments;
-        if(reup == stateChange.REGISTER){
-            doctorCredentialsStore[doctorKey] = doctorCredentials(doctorCred,DoctorType(doctorType),Sex(gender),true);
-            comments = "Doctor Credentials registered";
-        }
-        if(reup == stateChange.UPDATE){
-            doctorCredentialsStore[doctorKey].doctorCred = doctorCred;
-            doctorCredentialsStore[doctorKey].docType = DoctorType(doctorType);
-            doctorCredentialsStore[doctorKey].docSex = gender;
-            comments = "Doctor Credentials updated";
-        }
-        emit ehrEvent(
-            doctorKey,
-            comments,
-            block.timestamp);
-    }
+    // function doctorCreds(
+    //     uint doctorKey,
+    //     string memory doctorCred,
+    //     DoctorType doctorType,
+    //     Sex gender,
+    //     stateChange reup
+    // ) public {
+    //     require(doctorAccess[doctorKey].isExist == true, "EHR-DC-01: Doctor isn't registered");
+    //     string memory comments;
+    //     if(reup == stateChange.REGISTER){
+    //         doctorCredentialsStore[doctorKey] = doctorCredentials(doctorCred,DoctorType(doctorType),Sex(gender),true);
+    //         comments = "Doctor Credentials registered";
+    //     }
+    //     if(reup == stateChange.UPDATE){
+    //         doctorCredentialsStore[doctorKey].doctorCred = doctorCred;
+    //         doctorCredentialsStore[doctorKey].docType = DoctorType(doctorType);
+    //         doctorCredentialsStore[doctorKey].docSex = gender;
+    //         comments = "Doctor Credentials updated";
+    //     }
+    //     emit ehrEvent(
+    //         doctorKey,
+    //         comments,
+    //         block.timestamp);
+    // }
 
     //PatientLocationData register/update
     function registerPatientLoc(
