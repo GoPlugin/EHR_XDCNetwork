@@ -95,11 +95,11 @@ app.post('/api/registerPatients', async (req, res) => {
 app.post('/api/registerDoctor', async (req, res) => {
 
   //console.log("request value is", req.body, req.body[1], req.body[3])
-  const doctorName = req.body[1];
-  const doctorEmail = req.body[2];
-  const doctorMobile = req.body[3];
-  const doctorPass = req.body[4];
-  const stateChange = req.body[5];
+  const doctorName = req.body.doctorName;
+  const doctorEmail = req.body.doctorEmail;
+  const doctorMobile = req.body.doctorMobile;
+  const doctorPass = req.body.doctorPass;
+  const stateChange = req.body.stateChange;
   // const buyer = req.body[1];
   // const amountPaid = req.body[3];
   //const deployed_private_key = process.env.PRIVATE_KEY;
@@ -141,22 +141,27 @@ app.post('/api/registerDoctor', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-    console.log("stateChange, ", stateChange);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/registerPatientLoc', async (req, res) => {
 
-  const city = req.body[1];
-  const state = req.body[2];
-  const country = req.body[3];
-  const landmark = req.body[4];
-  const pincode = req.body[5];
-  const patKey = req.body[6];
+  const city = req.body.city;
+  const state = req.body.state;
+  const country = req.body.country;
+  const landmark = req.body.landmark;
+  const pincode = req.body.pincode;
+  const patKey = req.body.patKey;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   //const jobId = process.env.JOB_ID;
   //const oracle = process.env.ORACLE_ADDRESS;
@@ -181,7 +186,7 @@ app.post('/api/registerPatientLoc', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatientLoc(oracle, jobId, fsystm, tsystm, amountPaid, buyer, tokenaddress).encodeABI(),
+    data: requestContract.methods.registerPatientLoc(city, state, country, landmark, pincode, patKey).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -197,20 +202,26 @@ app.post('/api/registerPatientLoc', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/regPatientHealth', async (req, res) => {
 
-  const allergies = req.body[1];
-  const lifesaver = req.body[2];
-  const height = req.body[3];
-  const weight = req.body[4];
-  const patKey = req.body[5];
+  const allergies = req.body.allergies;
+  const lifesaver = req.body.lifesaver;
+  const height = req.body.height;
+  const weight = req.body.weight;
+  const patKey = req.body.patKey;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   //const jobId = process.env.JOB_ID;
   //const oracle = process.env.ORACLE_ADDRESS;
@@ -251,19 +262,25 @@ app.post('/api/regPatientHealth', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/regCareGiver', async (req, res) => {
 
-  const patKey = req.body[1];
-  const careName = req.body[2];
-  const careMobile = req.body[3];
-  const careRelation = req.body[4];
+  const patKey = req.body.patKey;
+  const careName = req.body.careName;
+  const careMobile = req.body.careMobile;
+  const careRelation = req.body.careRelation;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -303,20 +320,27 @@ app.post('/api/regCareGiver', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/updateCareGiver', async (req, res) => {
 
 
-  const patKey = req.body[1];
-  const careName = req.body[2];
-  const careMobile = req.body[3];
-  const careRelation = req.body[4];
+  const patKey = req.body.patKey;
+  const carePosition = req.body.carePosition;
+  const careName = req.body.careName;
+  const careMobile = req.body.careMobile;
+  const careRelation = req.body.careRelation;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -324,6 +348,7 @@ app.post('/api/updateCareGiver', async (req, res) => {
   // const tsystm = process.env.TSYSTEM;
   // const tokenaddress = process.env.PLITOKEN;
   console.log("patKey, ", patKey);
+  console.log("carePosition, ", carePosition);
   console.log("careName, ", careName);
   console.log("careMobile, ", careMobile);
   console.log("careRelation, ", careRelation);
@@ -340,7 +365,7 @@ app.post('/api/updateCareGiver', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.updateCareGiver(patKey, careName, careMobile, careRelation).encodeABI(),
+    data: requestContract.methods.updateCareGiver(patKey, carePosition, careName, careMobile, careRelation).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -356,19 +381,25 @@ app.post('/api/updateCareGiver', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/recordByPatient', async (req, res) => {
 
 
-  const patKey = req.body[1];
-  const rt = req.body[2];
-  const recordHash = req.body[3];
+  const patKey = req.body.patKey;
+  const rt = req.body.rt;
+  const recordHash = req.body.recordHash;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -408,19 +439,25 @@ app.post('/api/recordByPatient', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 app.post('/api/recordByDoctor', async (req, res) => {
 
-  const patKey = req.body[1];
-  const docKey = req.body[2];
-  const rt = req.body[3];
-  const recordHash = req.body[4];
+  const patKey = req.body.patKey;
+  const docKey = req.body.docKey;
+  const rt = req.body.rt;
+  const recordHash = req.body.recordHash;
   
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -460,11 +497,17 @@ app.post('/api/recordByDoctor', async (req, res) => {
 
   const txt = await xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log);
-  var request = h.decodeRunRequest(txt.logs[3]);
-  const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
-  console.log("resultSet  ,", resultset)
-  res.send(resultset)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
 })
 
 
