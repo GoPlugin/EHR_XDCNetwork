@@ -81,8 +81,8 @@ app.post('/api/registerPatients', async (req, res) => {
                         
   //                     )
   const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    console.log("events",events[0].returnValues.patientKey);
-    // console.log("events",events[0].returnValues);
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.retValue);
   // console.log("log-0", txt.logs[0]);
   // var request = txt.logs[0];
   // console.log("request", request);
