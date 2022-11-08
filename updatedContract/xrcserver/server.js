@@ -24,6 +24,7 @@ app.post('/api/registerPatients', async (req, res) => {
   const patientEmail = req.body.patientEmail;
   const patientMobile = req.body.patientMobile;
   const patientPass = req.body.patientPass;
+  const patKey = req.body.patKey;
   const stateChange = req.body.stateChange;
 
   //const buyer = req.body[1];
@@ -40,6 +41,7 @@ app.post('/api/registerPatients', async (req, res) => {
   console.log("patientMobile, ", patientMobile);
   console.log("patientPass, ", patientPass);
   console.log("stateChange, ", stateChange);
+  console.log("patKey, ", patKey);
   
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
@@ -55,7 +57,7 @@ app.post('/api/registerPatients', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, stateChange).encodeABI(),
+    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, patKey, stateChange).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -82,6 +84,7 @@ app.post('/api/registerPatients', async (req, res) => {
   //                     )
   const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
+    // console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
   // console.log("log-0", txt.logs[0]);
   // var request = txt.logs[0];

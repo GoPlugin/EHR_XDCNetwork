@@ -5,11 +5,15 @@ import "./interface/PatientInterface.sol";
 import "./interface/DoctorInterface.sol";
 import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
+
 contract EHR is PluginClient, PatientInterface, DoctorInterface {
     
     // address
     address public owner;
 
+    using Strings for Strings.value;
     constructor(address _pli) {
         setPluginToken(_pli);
         owner = msg.sender;
@@ -22,15 +26,15 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         }
 
     event ehrEvent(
-        uint retValue,
+        string retValue,
         string evenType,
         uint registeredOn
     );
 
     event RecordEvents(
         string comment,
-        uint patKey,
-        uint docKey,
+        string patKey,
+        string docKey,
         uint registeredOn
     );
 
@@ -38,29 +42,38 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         require(owner == msg.sender);
         _;
     }
-    modifier checkPatient(uint _patKey) {
+    modifier checkPatient(string memory _patKey) {
             require(patientAccess[_patKey].isExist == true, 
                     "Patient Not registered");
             _;
         }
-    modifier checkDoctor(uint _docKey) {
+    modifier checkDoctor(string memory _docKey) {
             require(doctorAccess[_docKey].isExist == true, 
                     "Doctor Not registered");
             _;
         }
         
     //Mapping
-    mapping(uint => patientEnroll) public patientAccess;
-    mapping(uint => doctorEnroll) public doctorAccess;
-    mapping(uint => patientGeo) public patientLocData;
-    mapping(uint => patienthealth) public patienthealthData;
-    mapping(uint => mapping(string => uint)) public patientrecordsData;
-    mapping(uint => mapping(uint => careGiver)) public careGiverData;
-    mapping(uint => mapping(uint => bool)) public accessForDoctor;
+    mapping(string => patientEnroll) public patientAccess;
+    mapping(string => doctorEnroll) public doctorAccess;
+    mapping(string => patientGeo) public patientLocData;
+    mapping(string => patienthealth) public patienthealthData;
+    mapping(string => mapping(string => uint)) public patientrecordsData;
+    mapping(string => mapping(uint => careGiver)) public careGiverData;
+    mapping(string => mapping(string => bool)) public accessForDoctor;
     mapping(uint => doctorCredentials) public doctorCredentialsStore;
     string[] RecordType = ['MRI','BLOODTEST','COVIDTEST','COVIDCERTIFICATE','CHECKUP'];
     uint[] index;
     
+    // function stringToBytes32(string memory source) public pure returns (bytes32 result) {
+    //     // require(bytes(source).length <= 32); // causes error
+    //     // but string have to be max 32 chars
+    //     // https://ethereum.stackexchange.com/questions/9603/understanding-mload-assembly-function
+    //     // http://solidity.readthedocs.io/en/latest/assembly.html
+    //     assembly {
+    //     result := mload(add(source, 32))
+    //     }
+    // }
 
     //registerPatients Register/update
     function registerPatients(
@@ -68,32 +81,66 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory patientEmail,
         string memory patientMobile,
         string memory patientPass,
+        string memory  patientKey,
         stateChange reup
-    ) public returns(uint){
-        uint patientKey = uint(keccak256(abi.encodePacked(patientMobile,patientEmail)));
+    ) public returns(string memory patKey){
+        string memory patKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
-            require (keccak256(bytes(patientAccess[patientKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
-            require (keccak256(bytes(patientAccess[patientKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
-            patientAccess[patientKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,true);
+            
+            patKey = Strings.toString(keccak256(abi.encodePacked(patientMobile,patientEmail)));
+            require (keccak256(bytes(patientAccess[patKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
+            require (keccak256(bytes(patientAccess[patKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
+            patientAccess[patKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,true);
             comments = "Patient Registration Done";
         }
         if(reup == stateChange.UPDATE){
-            require (keccak256(bytes(patientAccess[patientKey].patientEmail)) == keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
-            require (keccak256(bytes(patientAccess[patientKey].patientMobile)) == keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
-            patientAccess[patientKey].patientName = patientName;
-            patientAccess[patientKey].patientEmail = patientEmail;
-            patientAccess[patientKey].patientMobile = patientMobile;
+            patKey = patientKey;
+            require (keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
+            require (keccak256(bytes(patientAccess[patKey].patientMobile)) == keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
+            patientAccess[patKey].patientName = patientName;
+            patientAccess[patKey].patientEmail = patientEmail;
+            patientAccess[patKey].patientMobile = patientMobile;
             comments = "Patient Record Updated";
         }
         
         emit ehrEvent(
-            patientKey,
+            patKey,
             comments,
             block.timestamp);
-            return patientKey;
+        //return patKey;
     }
 
+    // function registerPatients(
+    //     bytes memory patientName,
+    //     string memory patientEmail,
+    //     string memory patientMobile,
+    //     bytes memory patientPass,
+    //     stateChange reup
+    // ) public returns(uint){
+    //     uint patientKey = uint(keccak256(abi.encodePacked(patientMobile,patientEmail)));
+    //     string memory comments;
+    //     if(reup == stateChange.REGISTER){
+    //         require (keccak256(bytes(patientAccess[patientKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
+    //         require (keccak256(bytes(patientAccess[patientKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
+    //         patientAccess[patientKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,true);
+    //         comments = "Patient Registration Done";
+    //     }
+    //     if(reup == stateChange.UPDATE){
+    //         require (keccak256(bytes(patientAccess[patientKey].patientEmail)) == keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
+    //         require (keccak256(bytes(patientAccess[patientKey].patientMobile)) == keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
+    //         patientAccess[patientKey].patientName = patientName;
+    //         patientAccess[patientKey].patientEmail = patientEmail;
+    //         patientAccess[patientKey].patientMobile = patientMobile;
+    //         comments = "Patient Record Updated";
+    //     }
+        
+    //     emit ehrEvent(
+    //         patientKey,
+    //         comments,
+    //         block.timestamp);
+    //         return patientKey;
+    // }
 
     // registerDoctor register/update
     function registerDoctor(
@@ -101,17 +148,20 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory doctorEmail,
         string memory doctorMobile,
         string memory doctorPass,
+        string memory  doctorKey,
         stateChange reup
-    ) public {
-        uint docKey = uint(keccak256(abi.encodePacked(doctorMobile,doctorEmail)));
+    ) public returns(string memory docKey){
+        string memory docKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
+            docKey = string(abi.encodePacked(doctorMobile,doctorEmail));
             require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) != keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
             require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) != keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
             doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,true);
             comments = "Doctor Registration Done";
         }
         if(reup == stateChange.UPDATE){
+            docKey = doctorKey;
             require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) == keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
             require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) == keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
             doctorAccess[docKey].doctorName = doctorName;
@@ -123,6 +173,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             docKey,
             comments,
             block.timestamp);
+            //return docKey;
     }
 
     // doctorCreds register/update
@@ -158,13 +209,14 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory country,
         string memory landmark,
         uint pincode,
-        uint patKey
-    ) public checkPatient(patKey){
+        string memory patKey
+    ) public checkPatient(patKey) returns(string memory){
         patientLocData[patKey] = patientGeo(city,state,country,landmark,pincode);
         emit ehrEvent(
             patKey,
             "Patient Location Data updated",
             block.timestamp);
+            return patKey;
     }
     //pregisterPatientHealth register/update
     function registerPatientHealth(
@@ -172,7 +224,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory lifesaver,
         uint height,
         uint weight,
-        uint patKey
+        string memory patKey
     ) public checkPatient(patKey){
         patienthealthData[patKey] = patienthealth(allergies,lifesaver,height,weight);
         emit ehrEvent(
@@ -183,7 +235,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     
     //registerCareGiver register
     function registerCareGiver(
-        uint patKey,
+        string memory patKey,
         uint position,//from API position parameter has to be passed
         string memory careName,
         string memory careMobile,
@@ -201,7 +253,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     //updateCareGiver update
     function updateCareGiver(
-        uint patKey,
+        string memory patKey,
         uint position,//from API position parameter has to be passed
         string memory careName,
         string memory careMobile,
@@ -217,7 +269,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     }
     //recordByPatient register/update
     function recordByPatient(
-        uint patKey,
+        string memory patKey,
         uint rt,
         uint recordHash
         ) public checkPatient(patKey){
@@ -226,8 +278,8 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     //recordByDoctor register/update
     function recordByDoctor(
-        uint patKey,
-        uint docKey,
+        string memory patKey,
+        string memory docKey,
         uint rt,
         uint recordHash
         ) public checkPatient(patKey){
@@ -238,8 +290,8 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     //AccessControl to grant or revoke access to doctor by patients toards updating medical records
     //accessControl access/revoke
     function accessControl(
-        uint _patKey,
-        uint _docKey,
+        string memory _patKey,
+        string memory _docKey,
         access ac
         ) public checkDoctor(_docKey){
         string memory accessComment;
