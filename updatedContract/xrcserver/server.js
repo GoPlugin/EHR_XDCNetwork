@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const app = express()
 const port = process.env.EA_PORT || 5001
 
+
 const xdc3 = new Xdc3(
   new Xdc3.providers.HttpProvider(process.env.CONNECTION_URL)
 );
@@ -26,6 +27,7 @@ app.post('/api/registerPatients', async (req, res) => {
   const patientPass = req.body.patientPass;
   const patKey = req.body.patKey;
   const stateChange = req.body.stateChange;
+  const patientDob = req.body.patientDob;
 
   //const buyer = req.body[1];
   //const amountPaid = req.body[3];
@@ -40,6 +42,7 @@ app.post('/api/registerPatients', async (req, res) => {
   console.log("patientEmail, ", patientEmail);
   console.log("patientMobile, ", patientMobile);
   console.log("patientPass, ", patientPass);
+  console.log("patientDob, ", patientDob);
   console.log("stateChange, ", stateChange);
   console.log("patKey, ", patKey);
   
@@ -57,7 +60,7 @@ app.post('/api/registerPatients', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, patKey, stateChange).encodeABI(),
+    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, patKey, patientDob, stateChange).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -86,6 +89,7 @@ app.post('/api/registerPatients', async (req, res) => {
     //console.log("events",events);
     // console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType})
   // console.log("log-0", txt.logs[0]);
   // var request = txt.logs[0];
   // console.log("request", request);
@@ -102,7 +106,9 @@ app.post('/api/registerDoctor', async (req, res) => {
   const doctorEmail = req.body.doctorEmail;
   const doctorMobile = req.body.doctorMobile;
   const doctorPass = req.body.doctorPass;
+  const doctorDob = req.body.doctorDob;
   const stateChange = req.body.stateChange;
+  const docKey = req.body.docKey;
   // const buyer = req.body[1];
   // const amountPaid = req.body[3];
   //const deployed_private_key = process.env.PRIVATE_KEY;
@@ -116,7 +122,10 @@ app.post('/api/registerDoctor', async (req, res) => {
   console.log("doctorEmail, ", doctorEmail);
   console.log("doctorMobile, ", doctorMobile);
   console.log("doctorPass, ", doctorPass);
+  console.log("doctorDob, ", doctorDob);
+  console.log("docKey, ", docKey);
   console.log("stateChange, ", stateChange);
+
 
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
@@ -128,7 +137,7 @@ app.post('/api/registerDoctor', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerDoctor(doctorName, doctorEmail, doctorMobile, doctorPass, stateChange).encodeABI(),
+    data: requestContract.methods.registerDoctor(doctorName, doctorEmail, doctorMobile, doctorPass, docKey, doctorDob, stateChange).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -151,6 +160,7 @@ app.post('/api/registerDoctor', async (req, res) => {
     const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
@@ -169,8 +179,7 @@ app.post('/api/registerPatientLoc', async (req, res) => {
   //const jobId = process.env.JOB_ID;
   //const oracle = process.env.ORACLE_ADDRESS;
   // const fsystm = process.env.FSYSTEM;
-  // const tsystm = process.env.TSYSTEM;
-  // const tokenaddress = process.env.PLITOKEN;
+
 
   console.log("City, ", city);
   console.log("State, ", state);
@@ -212,13 +221,14 @@ app.post('/api/registerPatientLoc', async (req, res) => {
     const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
   // res.send(resultset)
 })
 
-app.post('/api/regPatientHealth', async (req, res) => {
+app.post('/api/registerPatientHealth', async (req, res) => {
 
   const allergies = req.body.allergies;
   const lifesaver = req.body.lifesaver;
@@ -249,7 +259,7 @@ app.post('/api/regPatientHealth', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.regPatientHealth(allergies, lifesaver, height, weight, patKey).encodeABI(),
+    data: requestContract.methods.registerPatientHealth(allergies, lifesaver, height, weight, patKey).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -272,18 +282,20 @@ app.post('/api/regPatientHealth', async (req, res) => {
     const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
   // res.send(resultset)
 })
 
-app.post('/api/regCareGiver', async (req, res) => {
+app.post('/api/registerCareGiver', async (req, res) => {
 
   const patKey = req.body.patKey;
   const careName = req.body.careName;
   const careMobile = req.body.careMobile;
   const careRelation = req.body.careRelation;
+  const pos = req.body.pos;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -294,6 +306,7 @@ app.post('/api/regCareGiver', async (req, res) => {
   console.log("careName, ",careName);
   console.log("careMobile, ", careMobile);
   console.log("careRelation, ", careRelation);
+  console.log("pos, ", pos);
   // console.log("Buyer Address is, ", buyer);
   // console.log("Amount Paid in ERC20 is, ", amountPaid);
 
@@ -307,7 +320,7 @@ app.post('/api/regCareGiver', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.regCareGiver(patKey, careName, careMobile, careRelation).encodeABI(),
+    data: requestContract.methods.registerCareGiver(patKey, pos, careName, careMobile, careRelation).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -330,6 +343,7 @@ app.post('/api/regCareGiver', async (req, res) => {
     const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
@@ -344,8 +358,7 @@ app.post('/api/updateCareGiver', async (req, res) => {
   const careName = req.body.careName;
   const careMobile = req.body.careMobile;
   const careRelation = req.body.careRelation;
-  //const deployed_private_key = process.env.PRIVATE_KEY;
-  // const jobId = process.env.JOB_ID;
+
   // const oracle = process.env.ORACLE_ADDRESS;
   // const fsystm = process.env.FSYSTEM;
   // const tsystm = process.env.TSYSTEM;
@@ -356,7 +369,7 @@ app.post('/api/updateCareGiver', async (req, res) => {
   console.log("careMobile, ", careMobile);
   console.log("careRelation, ", careRelation);
   // console.log("Buyer Address is, ", buyer);
-  // console.log("Amount Paid in ERC20 is, ", amountPaid);
+ 
 
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
@@ -391,6 +404,7 @@ app.post('/api/updateCareGiver', async (req, res) => {
     const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.retValue);
+    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
@@ -414,7 +428,6 @@ app.post('/api/recordByPatient', async (req, res) => {
   console.log("rt, ", rt);
   console.log("recordHash, ", recordHash);
   // console.log("Buyer Address is, ", buyer);
-  // console.log("Amount Paid in ERC20 is, ", amountPaid);
 
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
@@ -426,7 +439,7 @@ app.post('/api/recordByPatient', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.recordByPatient(patKey, rt, recordHash).encodeABI(),
+    data: requestContract.methods.recordByPatient(patKey,rt,recordHash).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -446,10 +459,12 @@ app.post('/api/recordByPatient', async (req, res) => {
     .then(function(receipt){
       console.log("receipt value is",receipt.logs[0].topics[0]);
     });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    const events = await requestContract.getPastEvents("RecordEvents",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
+    console.log("events",events[0].returnValues.patKey);
+    res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
   // var request = h.decodeRunRequest(txt.logs[3]);
+
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
   // res.send(resultset)
@@ -473,6 +488,7 @@ app.post('/api/recordByDoctor', async (req, res) => {
   console.log("recordHash, ", recordHash);
   // console.log("Buyer Address is, ", buyer);
   // console.log("Amount Paid in ERC20 is, ", amountPaid);
+
 
   // // //Defining requestContract
   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
@@ -504,14 +520,73 @@ app.post('/api/recordByDoctor', async (req, res) => {
     .then(function(receipt){
       console.log("receipt value is",receipt.logs[0].topics[0]);
     });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
+    const events = await requestContract.getPastEvents("RecordEvents",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
+    console.log("events",events[0].returnValues.patKey);
+    res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
   // var request = h.decodeRunRequest(txt.logs[3]);
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
   // res.send(resultset)
 })
 
+app.post('/api/accessControl', async (req, res) => {
+
+  const patKey = req.body.patKey;
+  const docKey = req.body.docKey;
+  const ac = req.body.ac;
+  
+  // const jobId = process.env.JOB_ID;
+  // const oracle = process.env.ORACLE_ADDRESS;
+  // const fsystm = process.env.FSYSTEM;
+  // const tsystm = process.env.TSYSTEM;
+  // const tokenaddress = process.env.PLITOKEN;
+  console.log("patKey, ", patKey);
+  console.log("docKey, ", docKey);
+  console.log("rac, ", ac);
+  
+  // console.log("Buyer Address is, ", buyer);
+  // console.log("Amount Paid in ERC20 is, ", amountPaid);
+  
+
+  // // //Defining requestContract
+  const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
+  console.log("Requestor Contract is, ", requestContract);
+  const account = xdc3.eth.accounts.privateKeyToAccount(deployed_private_key);
+  console.log("Account Address is, ", account, account.address);
+  const nonce = await xdc3.eth.getTransactionCount(account.address);
+  const gasPrice = await xdc3.eth.getGasPrice();
+
+  const tx = {
+    nonce: nonce,
+    data: requestContract.methods.accessControl(patKey, docKey, ac).encodeABI(),
+    gasPrice: gasPrice,
+    to: process.env.REQUESTOR_CONTRACT,
+    from: account.address,
+  };
+
+  const gasLimit = await xdc3.eth.estimateGas(tx);
+  tx["gasLimit"] = gasLimit;
+
+  const signed = await xdc3.eth.accounts.signTransaction(
+    tx,
+    deployed_private_key
+  );
+
+  const txt = await xdc3.eth
+    .sendSignedTransaction(signed.rawTransaction)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("RecordEvents",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.patKey);
+    res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
+})
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))

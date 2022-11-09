@@ -5,15 +5,17 @@ import "./interface/PatientInterface.sol";
 import "./interface/DoctorInterface.sol";
 import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
+// import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+// import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+// import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract EHR is PluginClient, PatientInterface, DoctorInterface {
     
     // address
     address public owner;
 
-    using Strings for Strings.value;
+    
     constructor(address _pli) {
         setPluginToken(_pli);
         owner = msg.sender;
@@ -81,23 +83,25 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory patientEmail,
         string memory patientMobile,
         string memory patientPass,
-        string memory  patientKey,
+        string memory patientKey,
+        string memory patientDob,
         stateChange reup
     ) public returns(string memory patKey){
         string memory patKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
-            
-            patKey = Strings.toString(keccak256(abi.encodePacked(patientMobile,patientEmail)));
+            // patientS = uint256(keccak256(abi.encodePacked(patientMobile,patientEmail)));
+            // patKey = Strings.toString(patientS);
+            patKey = string(abi.encodePacked('PLI-EHR-PA-',patientMobile,'-',patientDob));
             require (keccak256(bytes(patientAccess[patKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
             require (keccak256(bytes(patientAccess[patKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
-            patientAccess[patKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,true);
+            patientAccess[patKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,patientDob,true);
             comments = "Patient Registration Done";
         }
         if(reup == stateChange.UPDATE){
             patKey = patientKey;
-            require (keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
-            require (keccak256(bytes(patientAccess[patKey].patientMobile)) == keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
+            // require (keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
+            // require (keccak256(bytes(patientAccess[patKey].patientMobile)) == keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
             patientAccess[patKey].patientName = patientName;
             patientAccess[patKey].patientEmail = patientEmail;
             patientAccess[patKey].patientMobile = patientMobile;
@@ -143,27 +147,29 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     // }
 
     // registerDoctor register/update
+
     function registerDoctor(
         string memory doctorName,
         string memory doctorEmail,
         string memory doctorMobile,
         string memory doctorPass,
-        string memory  doctorKey,
+        string memory doctorKey,
+        string memory doctorDob,
         stateChange reup
     ) public returns(string memory docKey){
         string memory docKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
-            docKey = string(abi.encodePacked(doctorMobile,doctorEmail));
+            docKey = string(abi.encodePacked('PLI-EHR-DO-',doctorMobile,'-',doctorDob));
             require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) != keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
             require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) != keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
-            doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,true);
+            doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,doctorDob,true);
             comments = "Doctor Registration Done";
         }
         if(reup == stateChange.UPDATE){
             docKey = doctorKey;
-            require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) == keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
-            require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) == keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
+            // require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) == keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
+            // require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) == keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
             doctorAccess[docKey].doctorName = doctorName;
             doctorAccess[docKey].doctorEmail = doctorEmail;
             doctorAccess[docKey].doctorMobile = doctorMobile;
@@ -216,7 +222,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             patKey,
             "Patient Location Data updated",
             block.timestamp);
-            return patKey;
+            //return patKey;
     }
     //pregisterPatientHealth register/update
     function registerPatientHealth(
@@ -274,6 +280,13 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint recordHash
         ) public checkPatient(patKey){
             patientrecordsData[patKey][RecordType[rt]] = recordHash;
+
+            emit RecordEvents(
+                "Record added by Patient",
+                patKey,
+                "  ",
+                block.timestamp
+            );
     }
 
     //recordByDoctor register/update
@@ -285,6 +298,13 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         ) public checkPatient(patKey){
             require(accessForDoctor[patKey][docKey] == true,"No access provided by patient");
             patientrecordsData[patKey][RecordType[rt]] = recordHash;
+            //string(abi.encodePacked(RecordType[rt]," record added by Doctor")),
+            emit RecordEvents(
+                "Record added by Doctor",
+                patKey,
+                docKey,
+                block.timestamp
+            );
     }
 
     //AccessControl to grant or revoke access to doctor by patients toards updating medical records
