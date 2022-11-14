@@ -1,5 +1,39 @@
 [
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_patKey",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_docKey",
+				"type": "string"
+			},
+			{
+				"internalType": "enum GenericInterface.access",
+				"name": "ac",
+				"type": "uint8"
+			}
+		],
+		"name": "accessControl",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_pli",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -49,15 +83,15 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"indexed": false,
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "docKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -74,9 +108,9 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "patientKey",
-				"type": "uint256"
+				"internalType": "string",
+				"name": "retValue",
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -91,43 +125,20 @@
 				"type": "uint256"
 			}
 		],
-		"name": "patregistration",
+		"name": "ehrEvent",
 		"type": "event"
 	},
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_patKey",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_docKey",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum GenericInterface.access",
-				"name": "ac",
-				"type": "uint8"
-			}
-		],
-		"name": "accessControl",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "docKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -148,9 +159,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -171,9 +182,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -225,18 +236,13 @@
 			},
 			{
 				"internalType": "string",
-				"name": "doctorCred",
+				"name": "doctorKey",
 				"type": "string"
 			},
 			{
-				"internalType": "enum DoctorInterface.DoctorType",
-				"name": "_doctorType",
-				"type": "uint8"
-			},
-			{
-				"internalType": "enum GenericInterface.Sex",
-				"name": "_gender",
-				"type": "uint8"
+				"internalType": "string",
+				"name": "doctorDob",
+				"type": "string"
 			},
 			{
 				"internalType": "enum GenericInterface.stateChange",
@@ -245,7 +251,13 @@
 			}
 		],
 		"name": "registerDoctor",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "docKey",
+				"type": "string"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -272,9 +284,9 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "registerPatientHealth",
@@ -310,13 +322,19 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "registerPatientLoc",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -343,22 +361,38 @@
 				"type": "string"
 			},
 			{
+				"internalType": "string",
+				"name": "patientKey",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "patientDob",
+				"type": "string"
+			},
+			{
 				"internalType": "enum GenericInterface.stateChange",
 				"name": "reup",
 				"type": "uint8"
 			}
 		],
 		"name": "registerPatients",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "patKey",
+				"type": "string"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "patKey",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -389,25 +423,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_pli",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "accessForDoctor",
@@ -424,9 +447,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -463,9 +486,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "doctorAccess",
@@ -490,6 +513,30 @@
 				"name": "doctorPass",
 				"type": "string"
 			},
+			{
+				"internalType": "string",
+				"name": "doctorDob",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "isExist",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "doctorCredentialsStore",
+		"outputs": [
 			{
 				"internalType": "string",
 				"name": "doctorCred",
@@ -530,9 +577,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "patientAccess",
@@ -558,6 +605,11 @@
 				"type": "string"
 			},
 			{
+				"internalType": "string",
+				"name": "patientDob",
+				"type": "string"
+			},
+			{
 				"internalType": "bool",
 				"name": "isExist",
 				"type": "bool"
@@ -569,9 +621,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "patienthealthData",
@@ -603,9 +655,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"name": "patientLocData",
@@ -642,9 +694,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
