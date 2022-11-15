@@ -10,22 +10,18 @@ import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 // import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 
+//contract EHR is PluginClient, PatientInterface, DoctorInterface {
 contract EHR is PluginClient, PatientInterface, DoctorInterface {
     
     // address
     address public owner;
-
+    patientViewDetails public patv;
+    //string[] public patv;
     
     constructor(address _pli) {
         setPluginToken(_pli);
         owner = msg.sender;
     }
-    struct careGiver {
-        string careName;
-        string careMobile;
-        string careRelation;
-        bool isExist; 
-        }
 
     event ehrEvent(
         string retValue,
@@ -33,11 +29,18 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint registeredOn
     );
 
+    event transactions(
+        string[] trans
+    );
+    
     event RecordEvents(
         string comment,
         string patKey,
         string docKey,
         uint registeredOn
+    );
+    event verify(
+        bool verified
     );
 
     modifier only_owner() {
@@ -57,6 +60,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         
     //Mapping
     mapping(string => patientEnroll) public patientAccess;
+    mapping(string => patientTransact[]) public patientTranStore;
     mapping(string => doctorEnroll) public doctorAccess;
     mapping(string => patientGeo) public patientLocData;
     mapping(string => patienthealth) public patienthealthData;
@@ -214,10 +218,11 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory state,
         string memory country,
         string memory landmark,
+        uint picHash,
         uint pincode,
         string memory patKey
     ) public checkPatient(patKey) returns(string memory){
-        patientLocData[patKey] = patientGeo(city,state,country,landmark,pincode);
+        patientLocData[patKey] = patientGeo(city,state,country,landmark,picHash,pincode);
         emit ehrEvent(
             patKey,
             "Patient Location Data updated",
@@ -335,13 +340,46 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         );
     }
     
-    // function siginInVerification(
-    //     string memory verifName,
-    //     string memory verifPass,
-    //     string memo
-    // ) public returns(bool){
-    //     require(patientAccess[]);
+    function siginInVerification(
+        string memory verifName,
+        string memory verifPass,
+        string memory patKey
+    ) public returns(bool){
+        require(patientAccess[patKey].isExist == true, 
+           "Patient Not registered");
+    emit verify(true);
+    }
 
-    // }
+    function patientView(
+        string memory patKey
+    ) public returns(patientViewDetails memory){
+        require(patientAccess[patKey].isExist == true, "Patient Not registered");
+        
+        // patv(patientLocData[patKey],patienthealthData[patKey],careGiverData[patKey][0]);
+        // patv.push(patientLocData[patKey]);
+        // patv.push(patienthealthData[patKey]);
+        // patv.push(careGiverData[patKey][0]);
+        // patv.push(careGiverData[patKey][1]);
+        // patv.push(careGiverData[patKey][2]);
+            // ,,,,careGiverData[patKey][2]);
+        return (patientLocData[patKey],patienthealthData[patKey],careGiverData[patKey][0]);
+    }
+
+    function transactionStore(
+        string memory patKey,
+        string memory comments,
+        uint transactHash,
+        uint32 flag 
+    ) public{
+        if(flag == 0){
+            patientTranStore[patKey].push(patientTransact(transactHash,comments,now));
+            string[] memory message = ['Transaction enetered successfully!!', patKey];
+            emit transactions(message);
+        }
+        if(flag == 1){
+            emit transactions(patientTranStore[patKey]);
+        }
+
+    }
 
 }

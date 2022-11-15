@@ -10,7 +10,27 @@ interface PatientInterface is GenericInterface {
         string patientEmail;
         string patientMobile;
         string patientPass; 
+        string patientDob;
         bool isExist; 
+    }
+
+    struct careGiver {
+        string careName;
+        string careMobile;
+        string careRelation;
+        bool isExist; 
+    }
+
+    struct patientViewDetails{
+        patientGeo patg;
+        patienthealth path;
+        careGiver careg;
+    }
+
+    struct patientTransact{
+        string tranHash;
+        string comments;
+        string time;
     }
 
     struct patientGeo {
@@ -18,6 +38,7 @@ interface PatientInterface is GenericInterface {
         string state;
         string country;
         string landmark;
+        uint picHash;
         uint pincode;  
     }
 
