@@ -86,11 +86,11 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     //registerPatients Register/update
     function registerPatients(
         string memory patientName,
-        string memory patientEmail,
         string memory patientMobile,
-        string memory patientPass,
-        string memory patientKey,
         string memory patientDob,
+        string memory patientKey,
+        string memory patientEmail,
+        string memory patientPass,
         stateChange reup
     ) public {
         string memory patKey;
@@ -101,7 +101,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             patKey = string(abi.encodePacked('PLI-EHR-PA-',patientMobile,'-',patientDob));
             require (keccak256(bytes(patientAccess[patKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
             require (keccak256(bytes(patientAccess[patKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
-            patientAccess[patKey] = patientEnroll(patientName,patientEmail,patientMobile,patientPass,patientDob,true);
+            patientAccess[patKey] = patientEnroll(patientName,patientMobile,patientDob,patientEmail,patientPass,true);
             comments = "Patient Registration Done";
         }
         if(reup == stateChange.UPDATE){
@@ -343,13 +343,18 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     }
     
     function siginInVerification(
-        // string memory verifName,
-        // string memory verifPass,
+        string memory verifEmail,
+        string memory verifPass,
         string memory patKey
     ) public {
+
         require(patientAccess[patKey].isExist == true, 
            "Patient Not registered");
-    emit verify(true);
+        require(keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(verifEmail)), 
+            "Not registered mail");
+        require(keccak256(bytes(patientAccess[patKey].patientPass)) == keccak256(bytes(verifPass)), 
+            "Password mismatch");
+        emit verify(true);
     }
 
     function patientView(
@@ -371,9 +376,10 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory patKey,
         string memory comments,
         uint transactHash
-    ) public returns(bool){
+    ) public {
+            require(patientAccess[patKey].isExist == true, "Patient Not registered");
             patientTranStore[patKey].push(patientTransact(transactHash,comments,block.timestamp));
-            return(true);
+            emit verify(true);
             //string[] memory message = ['Transaction enetered successfully!!', patKey];
             // string memory message = ;
             // message.push('Transaction enetered successfully!!');
@@ -383,9 +389,10 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     }
 
-    function transactionRetreive(
+    function transactionRetrieve(
         string memory patKey
     ) public view returns(patientTransact[] memory){
+        require(patientAccess[patKey].isExist == true, "Patient Not registered");
             return(patientTranStore[patKey]);
         }
 

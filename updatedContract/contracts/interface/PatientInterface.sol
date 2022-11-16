@@ -7,10 +7,10 @@ interface PatientInterface is GenericInterface {
 
     struct patientEnroll {
         string patientName;
-        string patientEmail;
         string patientMobile;
-        string patientPass; 
         string patientDob;
+        string patientEmail;
+        string patientPass;
         bool isExist; 
     }
 
