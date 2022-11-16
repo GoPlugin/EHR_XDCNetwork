@@ -98,7 +98,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         if(reup == stateChange.REGISTER){
             // patientS = uint256(keccak256(abi.encodePacked(patientMobile,patientEmail)));
             // patKey = Strings.toString(patientS);
-            patKey = string(abi.encodePacked('PLI-EHR-PA-',patientMobile,'-',patientDob));
+            patKey = string(abi.encodePacked(patientMobile,patientPass));
             require (keccak256(bytes(patientAccess[patKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
             require (keccak256(bytes(patientAccess[patKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
             patientAccess[patKey] = patientEnroll(patientName,patientMobile,patientDob,patientEmail,patientPass,true);
@@ -322,18 +322,24 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         access ac
         ) public checkDoctor(_docKey){
         string memory accessComment;
-        if(ac == access.GRANT){
-            require(accessForDoctor[_patKey][_docKey] == false,
-                    "EHR-AC-01: Access had been provided!");
-            accessForDoctor[_patKey][_docKey] = true;
-            accessComment = "Access is provided to doctor";
-        }
-        if(ac == access.REVOKE){
-            require(accessForDoctor[_patKey][_docKey] == true,
-                    "EHR-AC-02: Access was not provided!");
-            accessForDoctor[_patKey][_docKey] = false;
-            accessComment = "Access is revoked to doctor";
-        }
+        // if(ac == access.GRANT){
+        //     require(accessForDoctor[_patKey][_docKey] == false,
+        //             "EHR-AC-01: Access had been provided!");
+        //     accessForDoctor[_patKey][_docKey] = true;
+        //     accessComment = "Access is provided to doctor";
+        // }
+        // if(ac == access.REVOKE){
+        //     require(accessForDoctor[_patKey][_docKey] == true,
+        //             "EHR-AC-02: Access was not provided!");
+        //     accessForDoctor[_patKey][_docKey] = false;
+        //     accessComment = "Access is revoked to doctor";
+        // }
+        // if(ac == access.REQUEST){
+        //     require(accessForDoctor[_patKey][_docKey] == true,
+        //             "EHR-AC-02: Access was not provided!");
+        //     accessForDoctor[_patKey][_docKey] = false;
+        //     accessComment = "Access is revoked to doctor";
+        // }
         emit RecordEvents(
             accessComment,
             _patKey,
@@ -343,17 +349,20 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     }
     
     function siginInVerification(
-        string memory verifEmail,
+        string memory verifMobile,
         string memory verifPass,
         string memory patKey
     ) public {
-
-        require(patientAccess[patKey].isExist == true, 
-           "Patient Not registered");
-        require(keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(verifEmail)), 
-            "Not registered mail");
-        require(keccak256(bytes(patientAccess[patKey].patientPass)) == keccak256(bytes(verifPass)), 
-            "Password mismatch");
+        require(patientAccess[string(abi.encodePacked(verifMobile,verifPass))].isExist == true,
+            "Patient Not registered");
+        // require(patientAccess[patKey].isExist == true, 
+        //    "Patient Not registered");
+        // require(bytes(), 
+        //     "Credentials mismatch, access denied");
+        // require(keccak256(bytes(patientAccess[patKey].patientEmail)) == keccak256(bytes(verifEmail)), 
+        //     "Not registered mail");
+        // require(keccak256(bytes(patientAccess[patKey].patientPass)) == keccak256(bytes(verifPass)), 
+        //     "Password mismatch");
         emit verify(true);
     }
 
