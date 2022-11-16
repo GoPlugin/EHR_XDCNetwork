@@ -17,6 +17,7 @@ interface DoctorInterface is GenericInterface {
         string doctorEmail;
         string doctorMobile;
         string doctorPass; 
+        string doctorDob;
         bool isExist; 
     }
 

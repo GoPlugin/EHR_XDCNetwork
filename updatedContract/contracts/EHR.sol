@@ -1,13 +1,15 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
+pragma experimental ABIEncoderV2;
 
 import "./interface/PatientInterface.sol";
 import "./interface/DoctorInterface.sol";
 import "@goplugin/contracts/src/v0.8/PluginClient.sol";
 
+
 // import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 // import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+//import "@openzeppelin/contracts/utils/Strings.sol";
 // import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 
 //contract EHR is PluginClient, PatientInterface, DoctorInterface {
@@ -90,7 +92,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory patientKey,
         string memory patientDob,
         stateChange reup
-    ) public returns(string memory patKey){
+    ) public {
         string memory patKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
@@ -221,7 +223,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint picHash,
         uint pincode,
         string memory patKey
-    ) public checkPatient(patKey) returns(string memory){
+    ) public checkPatient(patKey) {
         patientLocData[patKey] = patientGeo(city,state,country,landmark,picHash,pincode);
         emit ehrEvent(
             patKey,
@@ -341,10 +343,10 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     }
     
     function siginInVerification(
-        string memory verifName,
-        string memory verifPass,
+        // string memory verifName,
+        // string memory verifPass,
         string memory patKey
-    ) public returns(bool){
+    ) public {
         require(patientAccess[patKey].isExist == true, 
            "Patient Not registered");
     emit verify(true);
@@ -352,7 +354,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     function patientView(
         string memory patKey
-    ) public returns(patientViewDetails memory){
+    ) public view returns(patientGeo memory, patienthealth memory, careGiver memory){
         require(patientAccess[patKey].isExist == true, "Patient Not registered");
         
         // patv(patientLocData[patKey],patienthealthData[patKey],careGiverData[patKey][0]);
@@ -361,25 +363,30 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         // patv.push(careGiverData[patKey][0]);
         // patv.push(careGiverData[patKey][1]);
         // patv.push(careGiverData[patKey][2]);
-            // ,,,,careGiverData[patKey][2]);
+        // ,,,,careGiverData[patKey][2]);
         return (patientLocData[patKey],patienthealthData[patKey],careGiverData[patKey][0]);
     }
 
     function transactionStore(
         string memory patKey,
         string memory comments,
-        uint transactHash,
-        uint32 flag 
-    ) public{
-        if(flag == 0){
-            patientTranStore[patKey].push(patientTransact(transactHash,comments,now));
-            string[] memory message = ['Transaction enetered successfully!!', patKey];
-            emit transactions(message);
-        }
-        if(flag == 1){
-            emit transactions(patientTranStore[patKey]);
-        }
+        uint transactHash
+    ) public returns(bool){
+            patientTranStore[patKey].push(patientTransact(transactHash,comments,block.timestamp));
+            return(true);
+            //string[] memory message = ['Transaction enetered successfully!!', patKey];
+            // string memory message = ;
+            // message.push('Transaction enetered successfully!!');
+            // emit transactions(message);
+
+        
 
     }
+
+    function transactionRetreive(
+        string memory patKey
+    ) public view returns(patientTransact[] memory){
+            return(patientTranStore[patKey]);
+        }
 
 }
