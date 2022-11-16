@@ -28,7 +28,7 @@ interface PatientInterface is GenericInterface {
     }
 
     struct patientTransact{
-        uint tranHash;
+        bytes tranHash;
         string comments;
         uint time;
     }

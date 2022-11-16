@@ -44,6 +44,9 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     event verify(
         bool verified
     );
+    event tranReview(
+        patientTransact pas
+    );
 
     modifier only_owner() {
         require(owner == msg.sender);
@@ -98,7 +101,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         if(reup == stateChange.REGISTER){
             // patientS = uint256(keccak256(abi.encodePacked(patientMobile,patientEmail)));
             // patKey = Strings.toString(patientS);
-            patKey = string(abi.encodePacked(patientMobile,patientPass));
+            patKey = string(abi.encodePacked('PLI-EHR-PAT-',patientMobile,patientPass));
             require (keccak256(bytes(patientAccess[patKey].patientEmail)) != keccak256(bytes(patientEmail)), "EHR-RP-01: Patient already Enrolled.");
             require (keccak256(bytes(patientAccess[patKey].patientMobile)) != keccak256(bytes(patientMobile)), "EHR-RP-02: Patient already Enrolled.");
             patientAccess[patKey] = patientEnroll(patientName,patientMobile,patientDob,patientEmail,patientPass,true);
@@ -166,7 +169,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         string memory docKey;
         string memory comments;
         if(reup == stateChange.REGISTER){
-            docKey = string(abi.encodePacked('PLI-EHR-DO-',doctorMobile,'-',doctorDob));
+            docKey = string(abi.encodePacked('PLI-EHR-DOC-',doctorMobile,'-',doctorDob));
             require (keccak256(bytes(doctorAccess[docKey].doctorEmail)) != keccak256(bytes(doctorEmail)), "EHR-RD-01: Doctor already Enrolled.");
             require (keccak256(bytes(doctorAccess[docKey].doctorMobile)) != keccak256(bytes(doctorMobile)), "EHR-RD-02: Doctor already Enrolled.");
             doctorAccess[docKey] = doctorEnroll(doctorName,doctorEmail,doctorMobile,doctorPass,doctorDob,true);
@@ -316,44 +319,44 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     //AccessControl to grant or revoke access to doctor by patients toards updating medical records
     //accessControl access/revoke
-    function accessControl(
-        string memory _patKey,
-        string memory _docKey,
-        access ac
-        ) public checkDoctor(_docKey){
-        string memory accessComment;
-        // if(ac == access.GRANT){
-        //     require(accessForDoctor[_patKey][_docKey] == false,
-        //             "EHR-AC-01: Access had been provided!");
-        //     accessForDoctor[_patKey][_docKey] = true;
-        //     accessComment = "Access is provided to doctor";
-        // }
-        // if(ac == access.REVOKE){
-        //     require(accessForDoctor[_patKey][_docKey] == true,
-        //             "EHR-AC-02: Access was not provided!");
-        //     accessForDoctor[_patKey][_docKey] = false;
-        //     accessComment = "Access is revoked to doctor";
-        // }
-        // if(ac == access.REQUEST){
-        //     require(accessForDoctor[_patKey][_docKey] == true,
-        //             "EHR-AC-02: Access was not provided!");
-        //     accessForDoctor[_patKey][_docKey] = false;
-        //     accessComment = "Access is revoked to doctor";
-        // }
-        emit RecordEvents(
-            accessComment,
-            _patKey,
-            _docKey,
-            block.timestamp
-        );
-    }
+    // function accessControl(
+    //     string memory _patKey,
+    //     string memory _docKey,
+    //     access ac
+    //     ) public checkDoctor(_docKey){
+    //     string memory accessComment;
+    //     // if(ac == access.GRANT){
+    //     //     require(accessForDoctor[_patKey][_docKey] == false,
+    //     //             "EHR-AC-01: Access had been provided!");
+    //     //     accessForDoctor[_patKey][_docKey] = true;
+    //     //     accessComment = "Access is provided to doctor";
+    //     // }
+    //     // if(ac == access.REVOKE){
+    //     //     require(accessForDoctor[_patKey][_docKey] == true,
+    //     //             "EHR-AC-02: Access was not provided!");
+    //     //     accessForDoctor[_patKey][_docKey] = false;
+    //     //     accessComment = "Access is revoked to doctor";
+    //     // }
+    //     // if(ac == access.REQUEST){
+    //     //     require(accessForDoctor[_patKey][_docKey] == true,
+    //     //             "EHR-AC-02: Access was not provided!");
+    //     //     accessForDoctor[_patKey][_docKey] = false;
+    //     //     accessComment = "Access is revoked to doctor";
+    //     // }
+    //     emit RecordEvents(
+    //         accessComment,
+    //         _patKey,
+    //         _docKey,
+    //         block.timestamp
+    //     );
+    // }
     
     function siginInVerification(
         string memory verifMobile,
-        string memory verifPass,
-        string memory patKey
+        string memory verifPass
+        // string memory patKey
     ) public {
-        require(patientAccess[string(abi.encodePacked(verifMobile,verifPass))].isExist == true,
+        require(patientAccess[string(abi.encodePacked('PLI-EHR-PAT-',verifMobile,verifPass))].isExist == true,
             "Patient Not registered");
         // require(patientAccess[patKey].isExist == true, 
         //    "Patient Not registered");
@@ -384,9 +387,10 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     function transactionStore(
         string memory patKey,
         string memory comments,
-        uint transactHash
+        bytes memory transactHash
     ) public {
             require(patientAccess[patKey].isExist == true, "Patient Not registered");
+            //uint _id = patientTranStore[patKey].length + 1;
             patientTranStore[patKey].push(patientTransact(transactHash,comments,block.timestamp));
             emit verify(true);
             //string[] memory message = ['Transaction enetered successfully!!', patKey];
@@ -398,11 +402,19 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     }
 
-    function transactionRetrieve(
-        string memory patKey
-    ) public view returns(patientTransact[] memory){
-        require(patientAccess[patKey].isExist == true, "Patient Not registered");
-            return(patientTranStore[patKey]);
-        }
+    // function transactionRetrieve(
+    //     string memory patKey
+    // //) public view returns(patientTransact[] memory){
+    // ) public {
+    //     require(patientAccess[patKey].isExist == true, "Patient Not registered");
+    //     uint _totTxn = patientTranStore[patKey].length;
+    //     patientTransact[] memory pas;// = new patientTransact[];
+    //     for(uint i=0;i<_totTxn;i++){
+    //         pas[i]= patientTranStore[patKey][i];
+    //         emit tranReview(pas[i]);
+    //     }
+    //     //emit tranReview(pas);
+    //         //return(pas);
+    //     }
 
 }
