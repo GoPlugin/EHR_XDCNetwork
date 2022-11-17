@@ -594,4 +594,127 @@ app.post('/api/accessControl', async (req, res) => {
   // res.send(resultset)
 })
 
+app.post('/api/siginInVerification', async (req, res) => {
+
+  const verifmobile = req.body.verifmobile;
+  const verifpasswd = req.body.verifpasswd;
+  //const ac = req.body.ac;
+  
+  // const jobId = process.env.JOB_ID;
+  // const oracle = process.env.ORACLE_ADDRESS;
+  // const fsystm = process.env.FSYSTEM;
+  // const tsystm = process.env.TSYSTEM;
+  // const tokenaddress = process.env.PLITOKEN;
+  console.log("verifmobile, ", verifmobile);
+  console.log("verifpasswd, ", verifpasswd);
+  //console.log("rac, ", ac);
+  
+  // console.log("Buyer Address is, ", buyer);
+  // console.log("Amount Paid in ERC20 is, ", amountPaid);
+  
+
+  // // //Defining requestContract
+  const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
+  console.log("Requestor Contract is, ", requestContract);
+  const account = xdc3.eth.accounts.privateKeyToAccount(deployed_private_key);
+  console.log("Account Address is, ", account, account.address);
+  const nonce = await xdc3.eth.getTransactionCount(account.address);
+  const gasPrice = await xdc3.eth.getGasPrice();
+
+
+  const tx = {
+    nonce: nonce,
+    data: requestContract.methods.siginInVerification(verifmobile, verifpasswd).encodeABI(),
+    gasPrice: gasPrice,
+    to: process.env.REQUESTOR_CONTRACT,
+    from: account.address,
+  };
+
+  const gasLimit = await xdc3.eth.estimateGas(tx);
+  tx["gasLimit"] = gasLimit;
+
+  const signed = await xdc3.eth.accounts.signTransaction(
+    tx,
+    deployed_private_key
+  );
+
+  const txt = await xdc3.eth
+    .sendSignedTransaction(signed.rawTransaction)
+    .once("receipt", console.log)
+    .then(function(receipt){
+      console.log("receipt value is",receipt.logs[0].topics[0]);
+    });
+    const events = await requestContract.getPastEvents("verify",{fromBlock:"latest",toBlock:"latest"});
+    //console.log("events",events);
+    console.log("events",events[0].returnValues.verified);
+    res.json({verified:events[0].returnValues.verified});
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
+})
+
+app.post('/api/patientView', async (req, res) => {
+
+  const patKey = req.body.patKey;
+  //const ac = req.body.ac;
+  
+  // const jobId = process.env.JOB_ID;
+  // const oracle = process.env.ORACLE_ADDRESS;
+  // const fsystm = process.env.FSYSTEM;
+  // const tsystm = process.env.TSYSTEM;
+  // const tokenaddress = process.env.PLITOKEN;
+  console.log("patKey, ", patKey);
+  //console.log("rac, ", ac);
+  
+  // console.log("Buyer Address is, ", buyer);
+  // console.log("Amount Paid in ERC20 is, ", amountPaid);
+  
+
+  // let result = await contractInstance.methods.viewBook(_bookId).call();
+  //   console.log("log:::book:::",result)
+
+  // // //Defining requestContract
+  const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
+  console.log("Requestor Contract is, ", requestContract);
+  const result = await requestContract.methods.patientView(patKey).call();
+  console.log("patientView", result)
+  // const account = xdc3.eth.accounts.privateKeyToAccount(deployed_private_key);
+  // console.log("Account Address is, ", account, account.address);
+  // const nonce = await xdc3.eth.getTransactionCount(account.address);
+  // const gasPrice = await xdc3.eth.getGasPrice();
+
+
+  // const tx = {
+  //   nonce: nonce,
+  //   data: requestContract.methods.patientView(patKey).encodeABI(),
+  //   gasPrice: gasPrice,
+  //   to: process.env.REQUESTOR_CONTRACT,
+  //   from: account.address,
+  // };
+
+  // const gasLimit = await xdc3.eth.estimateGas(tx);
+  // tx["gasLimit"] = gasLimit;
+
+  // const signed = await xdc3.eth.accounts.signTransaction(
+  //   tx,
+  //   deployed_private_key
+  // );
+
+  // const txt = await xdc3.eth
+  //   .sendSignedTransaction(signed.rawTransaction)
+  //   .once("receipt", console.log)
+  //   .then(function(receipt){
+  //     console.log("receipt value is",receipt);
+  //   });
+  //   // const events = await requestContract.getPastEvents("verify",{fromBlock:"latest",toBlock:"latest"});
+  //   // console.log("events",events[0].returnValues.verified);
+  //   // res.json({verified:events[0].returnValues.verified});
+  // var request = h.decodeRunRequest(txt.logs[3]);
+  // console.log("Req ,", request)
+  // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
+  // console.log("resultSet  ,", resultset)
+  // res.send(resultset)
+})
+
 app.listen(port, () => console.log(`Listening on port ${port}!`))
