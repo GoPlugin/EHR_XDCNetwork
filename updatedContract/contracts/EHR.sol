@@ -17,7 +17,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     
     // address
     address public owner;
-    patientViewDetails public patv;
+    //patientViewDetails public patv;
     //string[] public patv;
     
     constructor(address _pli) {
@@ -65,16 +65,17 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         
     //Mapping
     mapping(string => patientEnroll) public patientAccess;
-    mapping(string => patientTransact[]) public patientTranStore;
+    //mapping(string => patientTransact[]) public patientTranStore;
     mapping(string => doctorEnroll) public doctorAccess;
     mapping(string => patientGeo) public patientLocData;
     mapping(string => patienthealth) public patienthealthData;
-    mapping(string => mapping(string => uint)) public patientrecordsData;
+    //mapping(string => mapping(string => uint)) public patientrecordsData;
+    mapping(string => mapping(string => patientRecord)) public patientrecordsData;
     mapping(string => mapping(uint => careGiver)) public careGiverData;
     mapping(string => mapping(string => bool)) public accessForDoctor;
-    mapping(uint => doctorCredentials) public doctorCredentialsStore;
-    string[] RecordType = ['MRI','BLOODTEST','COVIDTEST','COVIDCERTIFICATE','CHECKUP'];
-    uint[] index;
+    //mapping(uint => doctorCredentials) public doctorCredentialsStore;
+    string[] public RecordType = ['MRI','BLOODTEST','COVIDTEST','COVIDCERTIFICATE','CHECKUP'];
+    //uint[] index;
     
     // function stringToBytes32(string memory source) public pure returns (bytes32 result) {
     //     // require(bytes(source).length <= 32); // causes error
@@ -286,15 +287,18 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     //recordByPatient register/update
     function recordByPatient(
         string memory patKey,
+        string memory recordHash,
         uint rt,
-        uint recordHash
+        uint accType
         ) public checkPatient(patKey){
-            patientrecordsData[patKey][RecordType[rt]] = recordHash;
+
+                patientrecordsData[patKey][RecordType[rt]] = patientRecord(recordHash);
+           
 
             emit RecordEvents(
                 "Record added by Patient",
                 patKey,
-                "  ",
+                patientrecordsData[patKey][RecordType[rt]].recordHash,
                 block.timestamp
             );
     }
@@ -307,8 +311,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         uint recordHash
         ) public checkPatient(patKey){
             require(accessForDoctor[patKey][docKey] == true,"No access provided by patient");
-            patientrecordsData[patKey][RecordType[rt]] = recordHash;
-            //string(abi.encodePacked(RecordType[rt]," record added by Doctor")),
+            //patientrecordsData[patKey][RecordType[rt]] = recordHash;
             emit RecordEvents(
                 "Record added by Doctor",
                 patKey,
@@ -384,23 +387,23 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
         return (patientLocData[patKey],patienthealthData[patKey],careGiverData[patKey][0]);
     }
 
-    function transactionStore(
-        string memory patKey,
-        string memory comments,
-        bytes memory transactHash
-    ) public {
-            require(patientAccess[patKey].isExist == true, "Patient Not registered");
-            //uint _id = patientTranStore[patKey].length + 1;
-            patientTranStore[patKey].push(patientTransact(transactHash,comments,block.timestamp));
-            emit verify(true);
-            //string[] memory message = ['Transaction enetered successfully!!', patKey];
-            // string memory message = ;
-            // message.push('Transaction enetered successfully!!');
-            // emit transactions(message);
+    // function transactionStore(
+    //     string memory patKey,
+    //     string memory comments,
+    //     bytes memory transactHash
+    // ) public {
+    //         require(patientAccess[patKey].isExist == true, "Patient Not registered");
+    //         //uint _id = patientTranStore[patKey].length + 1;
+    //         patientTranStore[patKey].push(patientTransact(transactHash,comments,block.timestamp));
+    //         emit verify(true);
+    //         //string[] memory message = ['Transaction enetered successfully!!', patKey];
+    //         // string memory message = ;
+    //         // message.push('Transaction enetered successfully!!');
+    //         // emit transactions(message);
 
         
 
-    }
+    // }
 
     // function transactionRetrieve(
     //     string memory patKey

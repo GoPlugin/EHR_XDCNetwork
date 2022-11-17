@@ -22,12 +22,13 @@ app.post('/api/registerPatients', async (req, res) => {
 
   console.log("request value is", req);
   const patientName = req.body.patientName;
-  const patientEmail = req.body.patientEmail;
   const patientMobile = req.body.patientMobile;
-  const patientPass = req.body.patientPass;
-  const patKey = req.body.patKey;
-  const stateChange = req.body.stateChange;
   const patientDob = req.body.patientDob;
+  const patKey = req.body.patKey;
+  const patientEmail = req.body.patientEmail;
+  const patientPass = req.body.patientPass;  
+  const stateChange = req.body.stateChange;
+
 
   //const buyer = req.body[1];
   //const amountPaid = req.body[3];
@@ -60,7 +61,7 @@ app.post('/api/registerPatients', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatients(patientName, patientEmail, patientMobile, patientPass, patKey, patientDob, stateChange).encodeABI(),
+    data: requestContract.methods.registerPatients(patientName, patientMobile, patientDob, patKey, patientEmail, patientPass, stateChange).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -173,6 +174,7 @@ app.post('/api/registerPatientLoc', async (req, res) => {
   const state = req.body.state;
   const country = req.body.country;
   const landmark = req.body.landmark;
+  const picHash = req.body.picHash;
   const pincode = req.body.pincode;
   const patKey = req.body.patKey;
   //const deployed_private_key = process.env.PRIVATE_KEY;
@@ -198,7 +200,7 @@ app.post('/api/registerPatientLoc', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.registerPatientLoc(city, state, country, landmark, pincode, patKey).encodeABI(),
+    data: requestContract.methods.registerPatientLoc(city, state, country, landmark, picHash, pincode, patKey).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -417,6 +419,7 @@ app.post('/api/recordByPatient', async (req, res) => {
   const patKey = req.body.patKey;
   const rt = req.body.rt;
   const recordHash = req.body.recordHash;
+  const accType = req.body.accType;
   //const deployed_private_key = process.env.PRIVATE_KEY;
   // const jobId = process.env.JOB_ID;
   // const oracle = process.env.ORACLE_ADDRESS;
@@ -427,6 +430,7 @@ app.post('/api/recordByPatient', async (req, res) => {
   console.log("patKey, ", patKey);
   console.log("rt, ", rt);
   console.log("recordHash, ", recordHash);
+  console.log("accType, ", accType);
   // console.log("Buyer Address is, ", buyer);
 
   // // //Defining requestContract
@@ -439,11 +443,12 @@ app.post('/api/recordByPatient', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.recordByPatient(patKey,rt,recordHash).encodeABI(),
+    data: requestContract.methods.recordByPatient(patKey,recordHash,rt,accType).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
   };
+
 
   const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
