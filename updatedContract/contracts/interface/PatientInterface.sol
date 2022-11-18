@@ -5,7 +5,7 @@ import "./GenericInterface.sol";
 
 interface PatientInterface is GenericInterface {
 
-    struct patientEnroll {
+    struct patientEnrollStore {
         string patientName;
         string patientMobile;
         string patientDob;
@@ -14,7 +14,11 @@ interface PatientInterface is GenericInterface {
         bool isExist; 
     }
 
-    struct careGiver {
+    // struct patientRecord{
+    //     string recordHash;
+    // }
+
+    struct careGiverStore {
         string careName;
         string careMobile;
         string careRelation;
@@ -22,9 +26,9 @@ interface PatientInterface is GenericInterface {
     }
 
     struct patientViewDetails{
-        patientGeo patg;
-        patienthealth path;
-        careGiver careg;
+        patientGeoStore patg;
+        patientHealthStore path;
+        careGiverStore careg;
     }
 
     struct patientTransact{
@@ -33,7 +37,7 @@ interface PatientInterface is GenericInterface {
         uint time;
     }
 
-    struct patientGeo {
+    struct patientGeoStore {
         string city;
         string state;
         string country;
@@ -42,9 +46,10 @@ interface PatientInterface is GenericInterface {
         uint pincode;  
     }
 
-    struct patienthealth {
+    struct patientHealthStore {
         string allergies;
         string lifesaver;
+        string bloodType;
         uint height;
         uint weight; 
     }
@@ -54,5 +59,6 @@ interface PatientInterface is GenericInterface {
         uint key;
         address updatedBy;
     }
+    
 }
 

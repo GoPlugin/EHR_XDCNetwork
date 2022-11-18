@@ -12,12 +12,12 @@ interface DoctorInterface is GenericInterface {
         OTHERS
     }
 
-    struct doctorEnroll {
+    struct doctorEnrollStore {
         string doctorName;
-        string doctorEmail;
         string doctorMobile;
-        string doctorPass; 
         string doctorDob;
+        string doctorEmail;
+        string doctorPass;
         bool isExist; 
     }
 

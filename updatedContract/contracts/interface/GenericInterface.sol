@@ -12,7 +12,10 @@ interface GenericInterface {
         OTHERS
     }
     enum access {
+        REVOKE,
         GRANT,
-        REVOKE
+        PENDING,
+        REQUEST
     }
+
 }

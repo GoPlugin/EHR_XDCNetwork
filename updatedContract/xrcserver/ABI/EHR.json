@@ -2,6 +2,29 @@
       {
         "inputs": [
           {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_docKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_access",
+            "type": "string"
+          }
+        ],
+        "name": "patientControl",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "address",
             "name": "_pli",
             "type": "address"
@@ -50,62 +73,6 @@
         "type": "event"
       },
       {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "patKey",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "docKey",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "recordHash",
-            "type": "uint256"
-          }
-        ],
-        "name": "recordByDoctor",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "patKey",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "recordHash",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rt",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "accType",
-            "type": "uint256"
-          }
-        ],
-        "name": "recordByPatient",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "anonymous": false,
         "inputs": [
           {
@@ -142,6 +109,31 @@
           {
             "indexed": false,
             "internalType": "string",
+            "name": "patKey",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "comments",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "registeredOn",
+            "type": "uint256"
+          }
+        ],
+        "name": "accesEvents",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "string",
             "name": "retValue",
             "type": "string"
           },
@@ -165,28 +157,51 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "patKey",
+            "name": "_patKey",
             "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "position",
+            "name": "_recordHash",
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "_recordIndex",
+            "type": "uint256"
+          }
+        ],
+        "name": "recordAddByPatient",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "string",
-            "name": "careName",
+            "name": "_patKey",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "careMobile",
+            "name": "_careName",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "careRelation",
+            "name": "_careMobile",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_careRelation",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_position",
+            "type": "uint256"
           }
         ],
         "name": "registerCareGiver",
@@ -198,48 +213,32 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "doctorName",
+            "name": "_doctorName",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "doctorEmail",
+            "name": "_doctorMobile",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "doctorMobile",
+            "name": "_doctorDob",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "doctorPass",
+            "name": "_doctorEmail",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "doctorKey",
+            "name": "_doctorPass",
             "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "doctorDob",
-            "type": "string"
-          },
-          {
-            "internalType": "enum GenericInterface.stateChange",
-            "name": "reup",
-            "type": "uint8"
           }
         ],
         "name": "registerDoctor",
-        "outputs": [
-          {
-            "internalType": "string",
-            "name": "docKey",
-            "type": "string"
-          }
-        ],
+        "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -247,28 +246,66 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "allergies",
+            "name": "_patientName",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "lifesaver",
+            "name": "_patientMobile",
             "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "height",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "weight",
-            "type": "uint256"
           },
           {
             "internalType": "string",
-            "name": "patKey",
+            "name": "_patientDob",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patientEmail",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patientPass",
+            "type": "string"
+          }
+        ],
+        "name": "registerPatient",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_allergies",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_lifesaver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patientKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_bloodType",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_height",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_weight",
+            "type": "uint256"
           }
         ],
         "name": "registerPatientHealth",
@@ -280,38 +317,38 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "city",
+            "name": "_city",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "state",
+            "name": "_state",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "country",
+            "name": "_country",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "landmark",
+            "name": "_landmark",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patKey",
             "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "picHash",
+            "name": "_picHash",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "pincode",
+            "name": "_pincode",
             "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "patKey",
-            "type": "string"
           }
         ],
         "name": "registerPatientLoc",
@@ -323,41 +360,16 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "patientName",
+            "name": "_patKey",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "patientMobile",
+            "name": "_docKey",
             "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "patientDob",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "patientKey",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "patientEmail",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "patientPass",
-            "type": "string"
-          },
-          {
-            "internalType": "enum GenericInterface.stateChange",
-            "name": "reup",
-            "type": "uint8"
           }
         ],
-        "name": "registerPatients",
+        "name": "requestAcces",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -366,12 +378,12 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "verifMobile",
+            "name": "_verifMobile",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "verifPass",
+            "name": "_verifPass",
             "type": "string"
           }
         ],
@@ -381,77 +393,133 @@
         "type": "function"
       },
       {
-        "anonymous": false,
-        "inputs": [
-          {
-            "components": [
-              {
-                "internalType": "bytes",
-                "name": "tranHash",
-                "type": "bytes"
-              },
-              {
-                "internalType": "string",
-                "name": "comments",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "time",
-                "type": "uint256"
-              }
-            ],
-            "indexed": false,
-            "internalType": "struct PatientInterface.patientTransact",
-            "name": "pas",
-            "type": "tuple"
-          }
-        ],
-        "name": "tranReview",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "string[]",
-            "name": "trans",
-            "type": "string[]"
-          }
-        ],
-        "name": "transactions",
-        "type": "event"
-      },
-      {
         "inputs": [
           {
             "internalType": "string",
-            "name": "patKey",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_careName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_careMobile",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_careRelation",
             "type": "string"
           },
           {
             "internalType": "uint256",
-            "name": "position",
+            "name": "_position",
             "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "careName",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "careMobile",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "careRelation",
-            "type": "string"
           }
         ],
         "name": "updateCareGiver",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_doctorName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_doctorDob",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_docKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_doctorEmail",
+            "type": "string"
+          }
+        ],
+        "name": "updateDoctor",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_patientName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patientDob",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patientEmail",
+            "type": "string"
+          }
+        ],
+        "name": "updatePatient",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_city",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_state",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_country",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_landmark",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_picHash",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_pincode",
+            "type": "uint256"
+          }
+        ],
+        "name": "updatePatientLoc",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -468,30 +536,6 @@
         ],
         "name": "verify",
         "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "name": "accessForDoctor",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
       },
       {
         "inputs": [
@@ -540,16 +584,11 @@
             "type": "string"
           }
         ],
-        "name": "doctorAccess",
+        "name": "doctorAccessData",
         "outputs": [
           {
             "internalType": "string",
             "name": "doctorName",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "doctorEmail",
             "type": "string"
           },
           {
@@ -559,18 +598,57 @@
           },
           {
             "internalType": "string",
-            "name": "doctorPass",
+            "name": "doctorDob",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "doctorDob",
+            "name": "doctorEmail",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "doctorPass",
             "type": "string"
           },
           {
             "internalType": "bool",
             "name": "isExist",
             "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          }
+        ],
+        "name": "emergencyView",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
           }
         ],
         "stateMutability": "view",
@@ -597,7 +675,7 @@
             "type": "string"
           }
         ],
-        "name": "patientAccess",
+        "name": "patientAccessData",
         "outputs": [
           {
             "internalType": "string",
@@ -637,31 +715,107 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "",
+            "name": "_patKey",
             "type": "string"
           }
         ],
-        "name": "patienthealthData",
+        "name": "patientDataView",
         "outputs": [
           {
-            "internalType": "string",
-            "name": "allergies",
-            "type": "string"
+            "components": [
+              {
+                "internalType": "string",
+                "name": "city",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "state",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "country",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "landmark",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "picHash",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "pincode",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct PatientInterface.patientGeoStore",
+            "name": "",
+            "type": "tuple"
           },
           {
-            "internalType": "string",
-            "name": "lifesaver",
-            "type": "string"
+            "components": [
+              {
+                "internalType": "string",
+                "name": "allergies",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "lifesaver",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "bloodType",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "height",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "weight",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct PatientInterface.patientHealthStore",
+            "name": "",
+            "type": "tuple"
           },
           {
-            "internalType": "uint256",
-            "name": "height",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "weight",
-            "type": "uint256"
+            "components": [
+              {
+                "internalType": "string",
+                "name": "careName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "careMobile",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "careRelation",
+                "type": "string"
+              },
+              {
+                "internalType": "bool",
+                "name": "isExist",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct PatientInterface.careGiverStore",
+            "name": "",
+            "type": "tuple"
           }
         ],
         "stateMutability": "view",
@@ -675,7 +829,7 @@
             "type": "string"
           }
         ],
-        "name": "patientLocData",
+        "name": "patientGeoData",
         "outputs": [
           {
             "internalType": "string",
@@ -717,19 +871,34 @@
             "internalType": "string",
             "name": "",
             "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
           }
         ],
-        "name": "patientrecordsData",
+        "name": "patientHealthData",
         "outputs": [
           {
             "internalType": "string",
-            "name": "recordHash",
+            "name": "allergies",
             "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "lifesaver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodType",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "height",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "weight",
+            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -739,102 +908,21 @@
         "inputs": [
           {
             "internalType": "string",
-            "name": "patKey",
+            "name": "",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "",
             "type": "string"
           }
         ],
-        "name": "patientView",
+        "name": "patientRecordsData",
         "outputs": [
           {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "city",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "state",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "country",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "landmark",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "picHash",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "pincode",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct PatientInterface.patientGeo",
+            "internalType": "uint256",
             "name": "",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "allergies",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "lifesaver",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "height",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "weight",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct PatientInterface.patienthealth",
-            "name": "",
-            "type": "tuple"
-          },
-          {
-            "components": [
-              {
-                "internalType": "string",
-                "name": "careName",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "careMobile",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "careRelation",
-                "type": "string"
-              },
-              {
-                "internalType": "bool",
-                "name": "isExist",
-                "type": "bool"
-              }
-            ],
-            "internalType": "struct PatientInterface.careGiver",
-            "name": "",
-            "type": "tuple"
+            "type": "uint256"
           }
         ],
         "stateMutability": "view",
