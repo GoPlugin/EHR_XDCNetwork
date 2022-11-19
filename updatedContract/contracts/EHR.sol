@@ -31,7 +31,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     event verify(
         bool verified
     );
-    event accesEvents(
+    event accessEvents(
             string patKey,
             string comments,
             uint registeredOn
@@ -241,7 +241,7 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             block.timestamp);
 
     }
-    //recordByPatient register/update
+    //recordAddByPatient 
     function recordAddByPatient(
         string memory _patKey,
         uint _recordHash,
@@ -257,13 +257,32 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             );
     }
 
-    function requestAcces(
+    //recordAddByDoctor
+    function recordAddByDoctor(
+        string memory _docKey,
+        string memory _patKey,
+        uint _recordHash,
+        uint _recordIndex
+        ) public checkPatient(_patKey){
+                require(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('GRANT'),
+                    "EHR-RABD-01: Access not provided by Patient");
+                patientRecordsData[_docKey][RecordType[_recordIndex]] = _recordHash;
+
+            emit RecordEvents(
+                "Record added by Doctor",
+                _docKey,
+                " ",
+                block.timestamp
+            );
+    }
+
+    function requestAccess(
         string memory _patKey,
         string memory _docKey
     ) public checkDoctor(_docKey){
         patientrecordAccessStatus[_patKey][_docKey] = 'REQUESTED';
 
-        emit accesEvents(
+        emit accessEvents(
             _patKey,
             'Access request registered in system',
             block.timestamp
@@ -277,9 +296,12 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
     ) public checkDoctor(_docKey){
         string memory _comments;
         if(string2Bytes(_access) == string2Bytes('GRANT')){
-            require(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('REQUESTED') | string2Bytes('PENDING'),
-                "EHR-PC-01: Not in the required status!");
-            patientrecordAccessStatus[_patKey][_docKey] = 'GRANT';
+            if(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('REQUESTED')){
+                patientrecordAccessStatus[_patKey][_docKey] = 'GRANT';
+            }
+            if(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('PENDING')){
+                patientrecordAccessStatus[_patKey][_docKey] = 'GRANT';
+            }    
             _comments = 'Access granted to Doctor request';
         }
         if(string2Bytes(_access) == string2Bytes('PENDING')){
@@ -289,13 +311,16 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
             _comments = 'Access pending to Doctor request';
         }
         if(string2Bytes(_access) == string2Bytes('REVOKE')){
-            require(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('GRANT')|string2Bytes('PENDING'),
-                "EHR-PC-03: Not in the required status!");
-            patientrecordAccessStatus[_patKey][_docKey] = 'REVOKE';
+            if(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('GRANT')){
+                patientrecordAccessStatus[_patKey][_docKey] = 'REVOKE';
+            }
+            if(string2Bytes(patientrecordAccessStatus[_patKey][_docKey]) == string2Bytes('PENDING')){
+                patientrecordAccessStatus[_patKey][_docKey] = 'REVOKE';
+            }    
             _comments = 'Access revoke to Doctor request';
         }
 
-        emit accesEvents(
+        emit accessEvents(
             _patKey,
             _comments,
             block.timestamp
@@ -303,6 +328,15 @@ contract EHR is PluginClient, PatientInterface, DoctorInterface {
 
     }
     
+    //list request
+    function listAccessStatus(
+        string memory _patKey,
+        string memory _docKey
+    ) public view returns(string memory){
+       
+        return(patientrecordAccessStatus[_patKey][_docKey]);
+    }
+
     //Login verification 
     function signInVerification(
         string memory _verifMobile,

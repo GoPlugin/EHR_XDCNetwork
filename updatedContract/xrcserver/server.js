@@ -772,7 +772,7 @@ app.post('/api/requestAccess', async (req, res) => {
 
   const tx = {
     nonce: nonce,
-    data: requestContract.methods.requestAcces(patKey, docKey).encodeABI(),
+    data: requestContract.methods.requestAccess(patKey, docKey).encodeABI(),
     gasPrice: gasPrice,
     to: process.env.REQUESTOR_CONTRACT,
     from: account.address,
@@ -792,7 +792,7 @@ app.post('/api/requestAccess', async (req, res) => {
     .then(function(receipt){
       console.log("receipt value is",receipt.logs[0].topics[0]);
     });
-    const events = await requestContract.getPastEvents("accesEvents",{fromBlock:"latest",toBlock:"latest"});
+    const events = await requestContract.getPastEvents("accessEvents",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.patKey);
     res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
@@ -851,7 +851,7 @@ app.post('/api/patientControl', async (req, res) => {
     .then(function(receipt){
       console.log("receipt value is",receipt.logs[0].topics[0]);
     });
-    const events = await requestContract.getPastEvents("accesEvents",{fromBlock:"latest",toBlock:"latest"});
+    const events = await requestContract.getPastEvents("accessEvents",{fromBlock:"latest",toBlock:"latest"});
     //console.log("events",events);
     console.log("events",events[0].returnValues.patKey);
     res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
@@ -859,6 +859,19 @@ app.post('/api/patientControl', async (req, res) => {
   // const resultset = { requestId: request.id, requestData: request.data.toString("utf-8") };
   // console.log("resultSet  ,", resultset)
   // res.send(resultset)
+})
+
+app.post('/api/listAccessStatus', async(req, res) => {
+  const patKey = req.body.patKey;
+  const docKey = req.body.docKey;
+  console.log("patKey, ", patKey);
+  console.log("docKey, ", docKey);
+   // // //Defining requestContract
+   const requestContract = new xdc3.eth.Contract(requestorABI, requestorcontractAddr);
+   console.log("Requestor Contract is, ", requestContract);
+   const result = await requestContract.methods.listAccessStatus(patKey,docKey).call();
+   console.log("listAccessStatus", result)
+
 })
 
 app.post('/api/signInVerification', async (req, res) => {

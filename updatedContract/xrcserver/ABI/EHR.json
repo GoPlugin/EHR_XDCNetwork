@@ -73,6 +73,34 @@
         "type": "event"
       },
       {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_docKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_recordHash",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_recordIndex",
+            "type": "uint256"
+          }
+        ],
+        "name": "recordAddByDoctor",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "anonymous": false,
         "inputs": [
           {
@@ -125,7 +153,7 @@
             "type": "uint256"
           }
         ],
-        "name": "accesEvents",
+        "name": "accessEvents",
         "type": "event"
       },
       {
@@ -369,7 +397,7 @@
             "type": "string"
           }
         ],
-        "name": "requestAcces",
+        "name": "requestAccess",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -387,7 +415,7 @@
             "type": "string"
           }
         ],
-        "name": "siginInVerification",
+        "name": "signInVerification",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -645,6 +673,30 @@
             "name": "",
             "type": "string"
           },
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_patKey",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_docKey",
+            "type": "string"
+          }
+        ],
+        "name": "listAccessStatus",
+        "outputs": [
           {
             "internalType": "string",
             "name": "",
