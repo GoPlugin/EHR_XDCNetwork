@@ -1,0 +1,53 @@
+{
+	"compiler": {
+		"version": "0.8.4+commit.c7e474f2"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"interface/PatientInterface.sol": "PatientInterface"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"interface/GenericInterface.sol": {
+			"keccak256": "0xbed9880eef5ef1724caf7718435640184e797dd59e23ab9d11d4dda40073c62a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e1fb604f3bbfb63de0bf9450a027bb991aff84a6e7d15f122475fe9006acea66",
+				"dweb:/ipfs/QmYBUgXBnWqha2DUjxQw9Bk6KUBmTRnMorc15mD5QknGrE"
+			]
+		},
+		"interface/PatientInterface.sol": {
+			"keccak256": "0x980193fd0454212902dca893a35fb55466d9ac0bcd2f6b72fcdff4ccd3172641",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1b2f4baf215ed80a9544eb3fa5b413f050678aa366a81afb1d793bc3976abd0d",
+				"dweb:/ipfs/Qme8HkaTUcX4KyNFSaTw6Yac3ZVnXbhEcWny2n2AMzLvSJ"
+			]
+		}
+	},
+	"version": 1
+}
