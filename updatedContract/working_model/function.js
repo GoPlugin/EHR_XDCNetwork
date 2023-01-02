@@ -1,21 +1,39 @@
 /* eslint-disable */
 const Xdc3 = require("xdc3");
+//const web3 = new Xdc3()
 require("dotenv").config();
 const h = require("chainlink-test-helpers");
 const express = require('express')
 const bodyParser = require('body-parser');
 //const app = express()
 const port = process.env.EA_PORT || 5001
+const gasLimit = 200000
 
 
 const xdc3 = new Xdc3(
   new Xdc3.providers.HttpProvider(process.env.CONNECTION_URL)
 );
-
+const expectedBlockTime = 3000;
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 const requestorABI = require("./ABI/ECA.json");
 const requestorcontractAddr = process.env.REQUESTOR_CONTRACT;
 const deployed_private_key = process.env.PRIVATE_KEY;
 
+const  getTxnStatus = async (txHash,web3) => {
+  let transactionReceipt = null
+  while (transactionReceipt == null) { // Waiting expectedBlockTime until the transaction is mined
+    transactionReceipt = await xdc3.eth.getTransactionReceipt(txHash);
+    await sleep(expectedBlockTime)
+  }
+  console.log("Got the transaction receipt: ", transactionReceipt, transactionReceipt.status)
+  if (transactionReceipt.status) {
+    return [txHash, true];
+  } else {
+    return [txHash, false];
+  }
+}
 //app.use(bodyParser.json())
 
 module.exports.registerPatient = async (data) => {
@@ -56,7 +74,7 @@ module.exports.registerPatient = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
   console.log("gasPrice", gasPrice);
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -65,22 +83,16 @@ module.exports.registerPatient = async (data) => {
   )
 
   console.log("gasPrice", gasPrice);
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-
-  // const transaction = xdc3.eth.abi.decodeLog(
-                        
-  //                     )
-  const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    // console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType})
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.updatePatient = async (data) => {
@@ -121,7 +133,7 @@ module.exports.updatePatient = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
   console.log("gasPrice", gasPrice);
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -130,22 +142,16 @@ module.exports.updatePatient = async (data) => {
   )
 
   console.log("gasPrice", gasPrice);
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-
-  // const transaction = xdc3.eth.abi.decodeLog(
-                        
-  //                     )
-  const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    // console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType})
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.registerDoctor = async (data) => {
@@ -181,7 +187,7 @@ module.exports.registerDoctor = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -189,17 +195,16 @@ module.exports.registerDoctor = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 
 }
 
@@ -238,7 +243,7 @@ module.exports.updateDoctor = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  // = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -246,17 +251,16 @@ module.exports.updateDoctor = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.registerPatientGeo = async (data) => {
@@ -292,7 +296,7 @@ module.exports.registerPatientGeo = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -300,17 +304,16 @@ module.exports.registerPatientGeo = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.updatePatientGeo = async (data) => {
@@ -346,7 +349,7 @@ module.exports.updatePatientGeo = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -354,17 +357,16 @@ module.exports.updatePatientGeo = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.registerPatientHealth = async (data) => {
@@ -399,7 +401,7 @@ module.exports.registerPatientHealth = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -407,17 +409,16 @@ module.exports.registerPatientHealth = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 
 }
 
@@ -452,7 +453,7 @@ module.exports.registerCareGiver = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -460,17 +461,16 @@ module.exports.registerCareGiver = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    return events;
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 
 }
 
@@ -506,7 +506,7 @@ module.exports.updateCareGiver = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -514,17 +514,16 @@ module.exports.updateCareGiver = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("ehrEvent",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.retValue);
-    //res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType});
-    return events;
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.recordAddByPatient = async (data) => {
@@ -559,7 +558,7 @@ module.exports.recordAddByPatient = async (data) => {
   };
 
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -567,17 +566,16 @@ module.exports.recordAddByPatient = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("RecordEvents",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.patKey);
-    return events;
-    //res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.recordAddByDoctor = async (data) => {
@@ -610,7 +608,7 @@ module.exports.recordAddByDoctor = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -618,17 +616,16 @@ module.exports.recordAddByDoctor = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("RecordEvents",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.patKey);
-    return events;
-    //res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.requestAccess = async (data) => {
@@ -656,7 +653,7 @@ module.exports.requestAccess = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -664,17 +661,16 @@ module.exports.requestAccess = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("accessEvents",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.patKey);
-    return events;
-    //res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
 }
 
 module.exports.patientControl = async (data) => {
@@ -703,7 +699,7 @@ module.exports.patientControl = async (data) => {
     from: account.address,
   };
 
-  const gasLimit = await xdc3.eth.estimateGas(tx);
+  //const gasLimit = await xdc3.eth.estimateGas(tx);
   tx["gasLimit"] = gasLimit;
 
   const signed = await xdc3.eth.accounts.signTransaction(
@@ -711,17 +707,16 @@ module.exports.patientControl = async (data) => {
     deployed_private_key
   );
 
-  const txt = await xdc3.eth
+  const returnData = await new Promise((resolve, reject) => {
+    const txt = xdc3.eth
     .sendSignedTransaction(signed.rawTransaction)
-    .once("receipt", console.log)
-    .then(function(receipt){
-      console.log("receipt value is",receipt.logs[0].topics[0]);
-    });
-    const events = await requestContract.getPastEvents("accessEvents",{fromBlock:"latest",toBlock:"latest"});
-    //console.log("events",events);
-    console.log("events",events[0].returnValues.patKey);
-    return events;
-    //res.json({patientKey:events[0].returnValues.patKey,message:events[0].returnValues.comment});
+    .on("transactionHash", async function (transactionHash){
+    const [txhash, status] = await getTxnStatus(transactionHash, xdc3)
+    console.log("`tx`h",txhash)
+    resolve({txhash,status})
+  })
+  });
+  return returnData;
  
 }
 

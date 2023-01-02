@@ -6,7 +6,9 @@ const router = express.Router();
 
 router.post('/registerPatient', async (req, res) => {
    const events = await registerPatient(req.body)
-    res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType})
+   console.log("EVENTS",events)
+   res.json(events)
+    // res.json({patientKey:events[0].returnValues.retValue,message:events[0].returnValues.evenType})
 })
 
 router.post('/updatePatient', async (req, res) => {
