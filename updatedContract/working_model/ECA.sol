@@ -47,7 +47,7 @@ contract ECA is PluginClient, PatientInterface, DoctorInterface, emergencyInterf
     mapping(string => patientGeoStore) public patientGeoData;
     mapping(string => patientHealthStore) public patientHealthData;
     mapping(string => mapping(string => patientRecords)) public patientRecordsData;
-    mapping(string => mapping(uint => careGiverStore)) public careGiverData;
+    mapping(string => mapping(string => careGiverStore)) public careGiverData;
    //string[] public RecordType = ['MRI','BLOODTEST','COVIDTEST','COVIDCERTIFICATE','CHECKUP'];
 
     //key hash functionality
@@ -114,7 +114,7 @@ contract ECA is PluginClient, PatientInterface, DoctorInterface, emergencyInterf
         string memory _careGiverName,
         string memory _careGiverMobile,
         string memory _careGiverRelation,
-        uint _position//from API position parameter has to be passed
+        string memory _position//from API position parameter has to be passed
     ) public checkPatient(_patientId){
             careGiverData[_patientId][_position] = careGiverStore(_careGiverName,_careGiverMobile,_careGiverRelation,true);
             
